@@ -14,8 +14,9 @@ export const config = {
      * - favicon.ico (favicon file)
      * - $e (homepage)
      * - public/assets (assets folder)
+     * - event/[id] (specific event page)
      * Feel free to modify this pattern to include more paths.
      */
-    "/((?!_next/static|_next/image|favicon.ico|$|assets).*)",
+    "/((?!_next/static|_next/image|favicon.ico|$|assets|event).*)",
   ],
 };
