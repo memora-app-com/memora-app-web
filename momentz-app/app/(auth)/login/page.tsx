@@ -27,12 +27,15 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import ErrorAlert from "@/components/ErrorAlert";
+import { ErrorAlert, InformativeAlert } from "@/components/ui/alert";
 import SeparatorWithText from "@/components/SeparatorWithText";
 import { LoadingIcon } from "@/components/LoadingIcon";
 
-export default function LoginPage() {
-  const [error, setError] = useState<string | null>(null);
+export default function LoginPage({
+  searchParams,
+}: {
+  searchParams: { error: string; message: string };
+}) {
   const [isLoading, setIsLoading] = useState(false);
 
   const form = useForm<z.infer<typeof logInFormSchema>>({
@@ -45,7 +48,12 @@ export default function LoginPage() {
         <CardTitle>Log in</CardTitle>
       </CardHeader>
       <CardContent>
-        {error && <ErrorAlert className="mb-4" message={error} />}
+        {searchParams?.error && (
+          <ErrorAlert className="mb-4" message={searchParams?.error} />
+        )}
+        {searchParams?.message && (
+          <InformativeAlert className="mb-4" message={searchParams?.message} />
+        )}
 
         <Form {...form}>
           <form>
@@ -102,8 +110,8 @@ export default function LoginPage() {
 
             <Button
               size="full"
-              type="submit"
               className="mt-4"
+              type="submit"
               variant={isLoading ? "outline" : "secondary"}
               disabled={isLoading}
               formAction={signup}

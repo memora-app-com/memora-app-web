@@ -3,6 +3,33 @@ import { cva, type VariantProps } from "class-variance-authority"
 
 import { cn } from "@/lib/utils"
 
+//begin custom
+import { AlertCircle } from "lucide-react";
+
+const ErrorAlert = React.forwardRef<
+  HTMLDivElement,
+  React.HTMLAttributes<HTMLDivElement> & { message: string }
+>(({ className, message, ...props }, ref) => (
+  <Alert variant="destructive" ref={ref} className={className} {...props}>
+    <AlertCircle className="h-4 w-4" />
+    <AlertTitle>Error</AlertTitle>
+    <AlertDescription>{message}</AlertDescription>
+  </Alert>
+));
+ErrorAlert.displayName = "ErrorAlert";
+
+const InformativeAlert = React.forwardRef<
+  HTMLDivElement,
+  React.HTMLAttributes<HTMLDivElement> & { message: string }
+>(({ className, message, ...props }, ref) => (
+  <Alert ref={ref} className={className} {...props}>
+    <AlertCircle className="h-4 w-4" />
+    <AlertDescription>{message}</AlertDescription>
+  </Alert>
+));
+InformativeAlert.displayName = "InformativeAlert";
+//end custom
+
 const alertVariants = cva(
   "relative w-full rounded-lg border p-4 [&>svg~*]:pl-7 [&>svg+div]:translate-y-[-3px] [&>svg]:absolute [&>svg]:left-4 [&>svg]:top-4 [&>svg]:text-foreground",
   {
@@ -56,4 +83,4 @@ const AlertDescription = React.forwardRef<
 ))
 AlertDescription.displayName = "AlertDescription"
 
-export { Alert, AlertTitle, AlertDescription }
+export { Alert, AlertTitle, AlertDescription, ErrorAlert, InformativeAlert };
