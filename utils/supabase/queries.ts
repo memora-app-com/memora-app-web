@@ -1,8 +1,9 @@
+import { cache } from "react";
 import { createClient } from "./client";
 
 const supabase = createClient();
 
-const fetchUserProfile = async (userId) => {
+const fetchUserProfile = cache(async (userId) => {
   const { data, error } = await supabase
     .from("users")
     .select()
@@ -11,6 +12,17 @@ const fetchUserProfile = async (userId) => {
   if (error) throw error;
 
   return data[0];
-};
+});
 
-export { fetchUserProfile };
+const fetchEvent = cache(async (code) => {
+  const { data, error } = await supabase
+    .from("events")
+    .select()
+    .eq("code", code);
+
+  if (error) throw error;
+
+  return data[0];
+});
+
+export { fetchUserProfile, fetchEvent };

@@ -1,9 +1,7 @@
 "use client";
 
 import { use, useEffect, useState } from "react";
-import { redirect, useRouter } from "next/navigation";
-import { createClient } from "@/utils/supabase/client";
-import { type User } from "@supabase/supabase-js";
+import { useRouter } from "next/navigation";
 import { createEvent } from "@/utils/supabase/mutations";
 import useUser from "@/hooks/useUser";
 import z from "zod";
@@ -23,7 +21,7 @@ import {
 import { Checkbox } from "@/components/ui/checkbox";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
-import { createEventFormSchema } from "@/lib/form-schemas";
+import { CreateEventFormSchema } from "@/lib/form-schemas";
 import { LoadingIcon } from "@/components/LoadingIcon";
 
 export default function CreateEventClient() {
@@ -33,19 +31,19 @@ export default function CreateEventClient() {
   const [isLoading, setIsLoading] = useState(false);
   const { authUser, userProfile, loading, error } = useUser();
 
-  const form = useForm<z.infer<typeof createEventFormSchema>>({
-    resolver: zodResolver(createEventFormSchema),
+  const form = useForm<z.infer<typeof CreateEventFormSchema>>({
+    resolver: zodResolver(CreateEventFormSchema),
   });
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setIsLoading(true);
 
-    const data = Object.fromEntries(new FormData(e.currentTarget));
+    const formData = Object.fromEntries(new FormData(e.currentTarget));
 
     try {
       //TODO: Add better validation and error handling
-      const formValues = createEventFormSchema.parse(data);
+      const formValues = CreateEventFormSchema.parse(formData);
 
       let startDate = formValues.startDate;
       if (formValues.startsNow === true) {
@@ -111,6 +109,7 @@ export default function CreateEventClient() {
                 </FormItem>
               )}
             />
+
             <FormField
               control={form.control}
               name="code"

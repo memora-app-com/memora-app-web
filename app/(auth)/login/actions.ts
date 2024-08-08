@@ -8,6 +8,8 @@ import { createClient } from "@/utils/supabase/server";
 export async function login(formData: FormData) {
   const supabase = createClient();
 
+  //TODO: Add form validation but inside the client component
+
   // type-casting here for convenience
   // in practice, you should validate your inputs
   const data = {

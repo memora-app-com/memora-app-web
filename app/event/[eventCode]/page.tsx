@@ -1,59 +1,48 @@
-"use server";
+"use client";
 
 import { useEffect, useState } from "react";
-import { redirect, useRouter } from "next/navigation";
-import { createClient } from "@/utils/supabase/server";
+import { useRouter } from "next/navigation";
+import useUser from "@/hooks/useUser";
+import { fetchEvent } from "@/utils/supabase/queries";
+import { LoadingIcon } from "@/components/LoadingIcon";
 
-export default async function EventDetails({
+export default function EventDetails({
   params,
 }: {
   params: { eventCode: string };
 }) {
-  const supabase = createClient();
+  const [event, setEvent] = useState(null);
+  const [isLoading, setIsLoading] = useState(false);
+  const { authUser, userProfile, loading, error } = useUser();
 
-  const { data, error } = await supabase.auth.getUser();
+  useEffect(() => {
+    setIsLoading(true);
+    async function fetchData() {
+      if (params.eventCode) {
+        const eventCode = params.eventCode;
+        const retrivedEvent = await fetchEvent(eventCode);
+        setEvent(retrivedEvent);
+      }
+      setIsLoading(false);
+    }
+    fetchData();
+  }, [params.eventCode]);
 
-  return <div>Event Id: {params.eventCode}</div>;
+  return (
+    <div>
+      {loading || isLoading ? (
+        <LoadingIcon />
+      ) : (
+        <h1>Event Name: {event.name}</h1>
+      )}
+    </div>
+  );
 
   // const router = useRouter();
   // const { id } = router.query;
   // const [event, setEvent] = useState(null);
   // const [photos, setPhotos] = useState([]);
   // const [newPhoto, setNewPhoto] = useState(null);
-
-  // useEffect(() => {
-  //   if (params.eventId) {
-  //     const fetchEvent = async () => {
-  //       const { data, error } = await supabase
-  //         .from("events")
-  //         .select("*")
-  //         .eq("id", params.eventId)
-  //         .single();
-
-  //       if (data) {
-  //         setEvent(data);
-  //       } else {
-  //         console.error(error);
-  //       }
-  //     };
-
-  //     const fetchPhotos = async () => {
-  //       const { data, error } = await supabase
-  //         .from("photos")
-  //         .select("*")
-  //         .eq("event_id", params.eventId);
-
-  //       if (data) {
-  //         setPhotos(data);
-  //       } else {
-  //         console.error(error);
-  //       }
-  //     };
-
-  //     fetchEvent();
-  //     fetchPhotos();
-  //   }
-  // }, [id]);
 
   // const handlePhotoUpload = async (e) => {
   //   e.preventDefault();

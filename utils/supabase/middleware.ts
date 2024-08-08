@@ -37,21 +37,25 @@ export async function updateSession(request: NextRequest) {
     data: { user },
   } = await supabase.auth.getUser();
 
-  if (
-    !user &&
-    !request.nextUrl.pathname.startsWith("/login") &&
-    !request.nextUrl.pathname.startsWith("/auth")
-  ) {
+  if (user && user.is_anonymous === true) {
+    // currently sign out anonymous users and let them login to new account
+    // TODO: In the future, we can link anonymous accounts to email accounts
+    await supabase.auth.signOut();
+  }
+
+  const isUserNotAnonymous = user && !user.is_anonymous;
+  const isRequestingAuthPage = 
+    request.nextUrl.pathname.startsWith("/login") ||
+    request.nextUrl.pathname.startsWith("/auth");
+    
+  if (!isUserNotAnonymous && !isRequestingAuthPage) {
     // no user, potentially respond by redirecting the user to the login page
     const url = request.nextUrl.clone();
     url.pathname = "/login";
     return NextResponse.redirect(url);
   }
-  if (
-    user &&
-    (request.nextUrl.pathname.startsWith("/login") ||
-      request.nextUrl.pathname.startsWith("/auth"))
-  ) {
+
+  if (isUserNotAnonymous && isRequestingAuthPage) {
     const url = request.nextUrl.clone();
     url.pathname = "/private";
     return NextResponse.redirect(url);

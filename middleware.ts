@@ -17,6 +17,6 @@ export const config = {
      * - event/[id] (specific event page)
      * Feel free to modify this pattern to include more paths.
      */
-    "/((?!_next/static|_next/image|favicon.ico|$|assets|error|confirm|event).*)",
+    "/((?!_next/static|_next/image|favicon.ico|$|assets|error|confirm|event|join-event).*)",
   ],
 };

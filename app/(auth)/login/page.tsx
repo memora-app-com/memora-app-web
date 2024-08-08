@@ -8,7 +8,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 
 import { login, signup } from "./actions";
-import { logInFormSchema } from "@/lib/form-schemas";
+import { LogInFormSchema } from "@/lib/form-schemas";
 
 import { Button } from "@/components/ui/button";
 import AuthCard from "@/components/AuthCard";
@@ -38,8 +38,8 @@ export default function LoginPage({
 }) {
   const [isLoading, setIsLoading] = useState(false);
 
-  const form = useForm<z.infer<typeof logInFormSchema>>({
-    resolver: zodResolver(logInFormSchema),
+  const form = useForm<z.infer<typeof LogInFormSchema>>({
+    resolver: zodResolver(LogInFormSchema),
   });
 
   return (
