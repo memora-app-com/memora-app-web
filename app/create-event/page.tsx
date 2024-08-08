@@ -3,7 +3,7 @@
 import { use, useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { createEvent } from "@/utils/supabase/mutations";
-import useUser from "@/hooks/useUser";
+import useAuthUser from "@/hooks/useUser";
 import z from "zod";
 
 import { Input } from "@/components/ui/input";
@@ -29,7 +29,7 @@ export default function CreateEventClient() {
   //TODO: Add error handling
   //TODO: Add loading state
   const [isLoading, setIsLoading] = useState(false);
-  const { authUser, userProfile, loading, error } = useUser();
+  const { authUser, authLoading, authError } = useAuthUser();
 
   const form = useForm<z.infer<typeof CreateEventFormSchema>>({
     resolver: zodResolver(CreateEventFormSchema),
@@ -70,7 +70,7 @@ export default function CreateEventClient() {
   return (
     <div className="container mx-auto p-4 max-w-lg">
       <h1 className="text-3xl font-bold mb-6">Create New Event</h1>
-      {loading ? (
+      {authLoading ? (
         <LoadingIcon />
       ) : (
         <Form {...form}>

@@ -1,21 +1,25 @@
 import { useState, useEffect } from "react";
-import { useQuery } from "@tanstack/react-query";
 import { createClient } from "@/utils/supabase/client";
-import { fetchUserProfile } from "@/utils/supabase/queries";
+// import { useQuery } from "@tanstack/react-query";
+// import { fetchUserProfile } from "@/utils/supabase/queries";
 
 const supabase = createClient();
 
-const useUser = () => {
-  const [authUser, setAuthUser] = useState();
-  const [loading, setLoading] = useState(true);
+const useAuthUser = () => {
+  const [authUser, setAuthUser] = useState(null);
+  const [authLoading, setAuthLoading] = useState(true);
+  const [authError, setAuthError] = useState(null);
 
   useEffect(() => {
     const getUser = async () => {
-      const { data: authUser } = await supabase.auth.getUser();
-      if (authUser?.user) {
-        setAuthUser(authUser.user);
+      const { data: authGetUser, error } = await supabase.auth.getUser();
+      if (error) {
+        setAuthError(error);
       }
-      setLoading(false);
+      if (authGetUser?.user) {
+        setAuthUser(authGetUser.user);
+      }
+      setAuthLoading(false);
     };
 
     getUser();
@@ -27,7 +31,7 @@ const useUser = () => {
         } else {
           setAuthUser(null);
         }
-        setLoading(false);
+        setAuthLoading(false);
       }
     );
 
@@ -36,22 +40,29 @@ const useUser = () => {
     };
   }, []);
 
-  const {
-    data: userProfile,
-    error,
-    isLoading: profileLoading,
-  } = useQuery({
-    queryKey: ["userProfile", authUser?.id],
-    queryFn: async () => fetchUserProfile(authUser?.id),
-    enabled: !!authUser, // Only enable the query when user is truthy
-  });
+  // TODO: Review if I need to fetch the user from the db here, or should I do that separately, only when needed
+  // const {
+  //   data: userProfile,
+  //   error,
+  //   isLoading: profileLoading,
+  // } = useQuery({
+  //   queryKey: ["userProfile", authUser?.id],
+  //   queryFn: async () => fetchUserProfile(authUser?.id),
+  //   enabled: !!authUser, // Only enable the query when user is truthy
+  // });
+
+  // return {
+  //   authUser,
+  //   userProfile,
+  //   loading: loading || profileLoading,
+  //   error,
+  // };
 
   return {
     authUser,
-    userProfile,
-    loading: loading || profileLoading,
-    error,
+    authLoading: authLoading,
+    authError,
   };
 };
 
-export default useUser;
+export default useAuthUser;

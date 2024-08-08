@@ -11,7 +11,7 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import useUser from "@/hooks/useUser";
+import useAuthUser from "@/hooks/useUser";
 import { JoinEventFormSchema } from "@/lib/form-schemas";
 import { zodResolver } from "@hookform/resolvers/zod";
 import React, { FormEvent, useEffect, useState } from "react";
@@ -31,24 +31,24 @@ const JoinEvent = ({
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
 
-  const { authUser, userProfile, loading, error } = useUser();
+  const { authUser, authLoading, authError } = useAuthUser();
 
   const form = useForm<z.infer<typeof JoinEventFormSchema>>({
     resolver: zodResolver(JoinEventFormSchema),
   });
 
   useEffect(() => {
-    if (!loading && searchParams.code) {
+    if (!authLoading && searchParams.code) {
       form.setValue("code", searchParams.code);
       document.getElementById("join-button").click();
     }
-  }, [loading]);
+  }, [authLoading]);
 
   async function handleSubmit(e: FormEvent<HTMLFormElement>): Promise<void> {
     e.preventDefault();
     setIsLoading(true);
 
-    if (!loading && !authUser) {
+    if (!authLoading && !authUser) {
       loginAnonymously();
     }
 

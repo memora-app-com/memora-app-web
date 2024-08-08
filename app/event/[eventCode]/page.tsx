@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import useUser from "@/hooks/useUser";
+import useAuthUser from "@/hooks/useUser";
 import { fetchEvent } from "@/utils/supabase/queries";
 import { LoadingIcon } from "@/components/LoadingIcon";
 
@@ -13,7 +13,7 @@ export default function EventDetails({
 }) {
   const [event, setEvent] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
-  const { authUser, userProfile, loading, error } = useUser();
+  const { authUser, authLoading, authError } = useAuthUser();
 
   useEffect(() => {
     setIsLoading(true);
@@ -30,7 +30,7 @@ export default function EventDetails({
 
   return (
     <div>
-      {loading || isLoading ? (
+      {authLoading || isLoading ? (
         <LoadingIcon />
       ) : (
         <h1>Event Name: {event.name}</h1>
