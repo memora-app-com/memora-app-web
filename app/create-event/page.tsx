@@ -1,14 +1,14 @@
 "use client";
 
-import { use, useEffect, useState } from "react";
+import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { createEvent } from "@/utils/supabase/mutations";
 import useAuthUser from "@/hooks/useUser";
 import z from "zod";
+import { addDays } from "date-fns";
 
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { Label } from "@/components/ui/label";
 import {
   Form,
   FormControl,
@@ -23,31 +23,16 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { CreateEventFormSchema } from "@/lib/form-schemas";
 import { LoadingIcon } from "@/components/LoadingIcon";
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover";
-import { CalendarIcon } from "lucide-react";
-import { Calendar } from "@/components/ui/calendar";
-import { cn } from "@/lib/utils";
-import { addDays, endOfDay, format } from "date-fns";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
 import { DateTimePicker } from "@/components/ui/datetime-picker";
 import { ErrorAlert } from "@/components/ui/alert";
+import { fetchRandomEventCode } from "@/utils/supabase/queries";
 
 export default function CreateEventClient() {
   const router = useRouter();
   //TODO: Add error handling
   //TODO: Add loading state
   const [isLoading, setIsLoading] = useState(false);
-  const [errors, setErrors] = useState({});
+  const [errors, setErrors] = useState([]);
   const { authUser, authLoading, authError } = useAuthUser();
 
   const form = useForm<z.infer<typeof CreateEventFormSchema>>({
@@ -57,6 +42,7 @@ export default function CreateEventClient() {
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setIsLoading(true);
+    setErrors([]);
 
     const formData = Object.fromEntries(new FormData(e.currentTarget));
 
@@ -69,10 +55,15 @@ export default function CreateEventClient() {
         startDate = new Date();
       }
 
+      let eventCode = formValues.code;
+      if (eventCode === undefined || eventCode === null || eventCode === "") {
+        eventCode = await fetchRandomEventCode();
+      }
+
       const createdEvent = await createEvent({
         name: formValues.name,
         description: formValues.description,
-        code: formValues.code,
+        code: eventCode,
         startDate: startDate,
         endDate: formValues.endDate,
         userId: authUser.id,
@@ -81,7 +72,7 @@ export default function CreateEventClient() {
       router.push(`/event/${createdEvent.code}`);
     } catch (error) {
       if (error instanceof z.ZodError) {
-        const newErrors = error.flatten().fieldErrors;
+        const newErrors = Object.values(error.flatten().fieldErrors);
         setErrors(newErrors);
       }
     }
@@ -96,48 +87,13 @@ export default function CreateEventClient() {
         <LoadingIcon />
       ) : (
         <Form {...form}>
-          {errors && (
+          {errors.length !== 0 && (
             <ErrorAlert
               className="mb-4"
               message={Object.values(errors).join(", ")}
             />
           )}
           <form onSubmit={handleSubmit}>
-            <FormField
-              control={form.control}
-              name="name"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Event name</FormLabel>
-                  <FormControl>
-                    <Input
-                      type="text"
-                      placeholder="Example: Our wedding"
-                      {...field}
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <FormField
-              control={form.control}
-              name="description"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Description</FormLabel>
-                  <FormControl>
-                    <Input
-                      type="text"
-                      placeholder="Enter the event description (optional)"
-                      {...field}
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
             <FormField
               control={form.control}
               name="code"
@@ -162,6 +118,42 @@ export default function CreateEventClient() {
                       />
                     </FormControl>
                   </div>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            <FormField
+              control={form.control}
+              name="name"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Event name</FormLabel>
+                  <FormControl>
+                    <Input
+                      type="text"
+                      placeholder="Example: Our wedding (optional)"
+                      {...field}
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            <FormField
+              control={form.control}
+              name="description"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Description</FormLabel>
+                  <FormControl>
+                    <Input
+                      type="text"
+                      placeholder="Enter the event description (optional)"
+                      {...field}
+                    />
+                  </FormControl>
                   <FormMessage />
                 </FormItem>
               )}
@@ -213,7 +205,7 @@ export default function CreateEventClient() {
                 name="endDate"
                 render={({ field }) => (
                   <FormItem className="flex flex-col mt-2">
-                    <FormLabel htmlFor="endDate">End date</FormLabel>
+                    <FormLabel>End date</FormLabel>
                     <FormControl>
                       <DateTimePicker
                         hourCycle={24}

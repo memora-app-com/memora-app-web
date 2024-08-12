@@ -25,4 +25,13 @@ const fetchEvent = cache(async (code) => {
   return data[0];
 });
 
-export { fetchUserProfile, fetchEvent };
+const fetchRandomEventCode = async () => {
+  const { data, error } = await supabase
+    .rpc('get_random_event_code');
+  
+  if (error) throw error;
+
+  return data;
+};
+
+export { fetchUserProfile, fetchEvent, fetchRandomEventCode };
