@@ -23,12 +23,31 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { CreateEventFormSchema } from "@/lib/form-schemas";
 import { LoadingIcon } from "@/components/LoadingIcon";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
+import { CalendarIcon } from "lucide-react";
+import { Calendar } from "@/components/ui/calendar";
+import { cn } from "@/lib/utils";
+import { addDays, endOfDay, format } from "date-fns";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { DateTimePicker } from "@/components/ui/datetime-picker";
+import { ErrorAlert } from "@/components/ui/alert";
 
 export default function CreateEventClient() {
   const router = useRouter();
   //TODO: Add error handling
   //TODO: Add loading state
   const [isLoading, setIsLoading] = useState(false);
+  const [errors, setErrors] = useState({});
   const { authUser, authLoading, authError } = useAuthUser();
 
   const form = useForm<z.infer<typeof CreateEventFormSchema>>({
@@ -42,12 +61,12 @@ export default function CreateEventClient() {
     const formData = Object.fromEntries(new FormData(e.currentTarget));
 
     try {
-      //TODO: Add better validation and error handling
+      //TODO: Add field error validation
       const formValues = CreateEventFormSchema.parse(formData);
 
       let startDate = formValues.startDate;
       if (formValues.startsNow === true) {
-        startDate = new Date().toISOString();
+        startDate = new Date();
       }
 
       const createdEvent = await createEvent({
@@ -61,19 +80,28 @@ export default function CreateEventClient() {
 
       router.push(`/event/${createdEvent.code}`);
     } catch (error) {
-      console.error(error.errors);
+      if (error instanceof z.ZodError) {
+        const newErrors = error.flatten().fieldErrors;
+        setErrors(newErrors);
+      }
     }
 
     setIsLoading(false);
   };
 
   return (
-    <div className="container mx-auto p-4 max-w-lg">
+    <div className="container mx-auto p-4 max-w-md">
       <h1 className="text-3xl font-bold mb-6">Create New Event</h1>
       {authLoading ? (
         <LoadingIcon />
       ) : (
         <Form {...form}>
+          {errors && (
+            <ErrorAlert
+              className="mb-4"
+              message={Object.values(errors).join(", ")}
+            />
+          )}
           <form onSubmit={handleSubmit}>
             <FormField
               control={form.control}
@@ -139,58 +167,67 @@ export default function CreateEventClient() {
               )}
             />
 
-            <FormField
-              control={form.control}
-              name="startDate"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Start date</FormLabel>
-
-                  <FormField
-                    control={form.control}
-                    name="startsNow"
-                    render={({ field }) => (
-                      <FormItem className="flex flex-row items-start space-x-3 space-y-0 ">
-                        <FormControl>
-                          <Checkbox
-                            value={"true"}
-                            defaultChecked={true}
-                            checked={field.value}
-                            onCheckedChange={field.onChange}
-                          />
-                        </FormControl>{" "}
-                        <FormLabel className="font-normal">
-                          Event starts now
-                        </FormLabel>
-                      </FormItem>
-                    )}
-                  />
-
-                  <FormControl>
-                    <Input
-                      type="datetime-local"
-                      {...field}
+            <div className="sm:grid sm:grid-cols-2 sm:gap-4">
+              <FormField
+                control={form.control}
+                name="startDate"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Start date</FormLabel>
+                    <DateTimePicker
+                      hourCycle={24}
+                      granularity="minute"
+                      displayFormat={{ hour24: "yyyy/MM/dd hh:mm" }}
+                      value={field.value}
+                      onChange={field.onChange}
                       disabled={form.watch("startsNow", true)}
+                      placeholder="Pick start of event"
                     />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
+                    <FormField
+                      control={form.control}
+                      name="startsNow"
+                      render={({ field }) => (
+                        <FormItem className="flex flex-row items-start space-x-3 space-y-0 ">
+                          <FormControl>
+                            <Checkbox
+                              value={"true"}
+                              defaultChecked={true}
+                              checked={field.value}
+                              onCheckedChange={field.onChange}
+                            />
+                          </FormControl>
+                          <FormLabel className="font-normal">
+                            Event starts now
+                          </FormLabel>
+                        </FormItem>
+                      )}
+                    />
 
-            <FormField
-              control={form.control}
-              name="endDate"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>End date</FormLabel>
-                  <FormControl>
-                    <Input type="datetime-local" {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={form.control}
+                name="endDate"
+                render={({ field }) => (
+                  <FormItem className="flex flex-col mt-2">
+                    <FormLabel htmlFor="endDate">End date</FormLabel>
+                    <FormControl>
+                      <DateTimePicker
+                        hourCycle={24}
+                        granularity="minute"
+                        displayFormat={{ hour24: "yyyy/MM/dd hh:mm" }}
+                        value={field.value || addDays(new Date(), 1)}
+                        onChange={field.onChange}
+                        placeholder="Pick end of event"
+                      />
+                    </FormControl>
+                  </FormItem>
+                )}
+              />
+            </div>
 
             <div className="mt-4 flex justify-end">
               <Button type="submit" disabled={isLoading}>

@@ -41,7 +41,7 @@ export default function LoginPage({
   const form = useForm<z.infer<typeof LogInFormSchema>>({
     resolver: zodResolver(LogInFormSchema),
   });
-
+  // TODO: Use tabs for login and signup: https://ui.shadcn.com/docs/components/tabs
   return (
     <AuthCard>
       <CardHeader>

@@ -29,31 +29,32 @@ const createOrRetrieveUser = async (props: { uuid: string; email: string }) => {
       email: props.email,
       name: "John Doe",
     })
-    .single();
+    .select();
 
   if (error) {
     throw new Error(`Supabase customer creation failed: ${error.message}`);
   }
 
-  return data;
+  return data[0];
 };
 
 const createEvent = async (props: {
   name: string;
   description: string;
   code: string;
-  startDate: string;
-  endDate: string;
+  startDate: Date;
+  endDate: Date;
   userId: string;
 }) => {
+
   const { data, error } = await supabase
     .from("events")
     .insert({
       name: props.name,
       description: props.description,
       code: props.code,
-      start_date: props.startDate,
-      end_date: props.endDate,
+      start_date: props.startDate.toISOString(),
+      end_date: props.endDate.toISOString(),
       host_id: props.userId,
     })
     .select();
