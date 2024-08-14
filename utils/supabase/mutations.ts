@@ -6,6 +6,7 @@ import type { Database, Tables } from "@/database.types";
 // TODO: Check the implications of using supabaseAdmin with SERVICE_ROLE_KEY
 // versus supabase with ANON_KEY and policies set accordingly
 const supabase = createClient();
+const bucketName = "momentz-bucket";
 
 const createOrRetrieveUser = async (props: { uuid: string; email: string }) => {
   const { data: retrievedUser, error: retrieveError } = await supabase
@@ -67,4 +68,38 @@ const createEvent = async (props: {
   return data[0];
 };
 
-export { createOrRetrieveUser, createEvent };
+const createPhotos = async (props: {
+  eventId: number;
+  userId: string;
+  url: string;
+}[]) => {
+  const { data, error } = await supabase
+    .from("photos")
+    .upsert(props.map((photo) => ({
+      event_id: photo.eventId,
+      user_id: photo.userId,
+      url: photo.url,
+    })), { onConflict: "url" })
+    .select();
+
+  if (error) {
+    throw new Error(`Supabase photo creation failed: ${error.message}`);
+  }
+
+  return data;
+}
+
+const deletePhotoObjects = async (props: { urls: string[] }) => {
+  const { data, error } = await supabase
+    .storage
+    .from(bucketName)
+    .remove(props.urls.map((url) => url.split(`/${bucketName}/`)[1]));
+
+  if (error) {
+    throw new Error(`Supabase photo deletion failed: ${error.message}`);
+  }
+
+  return data[0];
+}
+
+export { createOrRetrieveUser, createEvent, createPhotos, deletePhotoObjects};

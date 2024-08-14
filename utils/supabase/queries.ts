@@ -25,6 +25,17 @@ const fetchEvent = cache(async (code) => {
   return data[0];
 });
 
+const fetchPhotos = cache(async (eventId) => {
+  const { data, error } = await supabase
+    .from("photos")
+    .select()
+    .eq("event_id", eventId);
+
+  if (error) throw error;
+
+  return data;
+});
+
 const fetchRandomEventCode = async () => {
   const { data, error } = await supabase
     .rpc('get_random_event_code');
@@ -34,4 +45,4 @@ const fetchRandomEventCode = async () => {
   return data;
 };
 
-export { fetchUserProfile, fetchEvent, fetchRandomEventCode };
+export { fetchUserProfile, fetchEvent, fetchPhotos, fetchRandomEventCode };
