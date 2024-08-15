@@ -20,6 +20,7 @@ import {
 import MultipleImageUploader from "./MultipleImageUploader";
 import { createPhotos, deletePhotoObjects } from "@/utils/supabase/mutations";
 import { UploadedFile } from "./UploadedFile";
+import Image from "next/image";
 
 export default function EventDetails({
   params,
@@ -137,6 +138,7 @@ export default function EventDetails({
           <div>
             <h2 className="text-xl font-bold mb-4">Gallery</h2>
             {/* TODO: Work a bit with these styles */}
+            {/* examples: https://flowbite.com/docs/components/gallery/ */}
             {/* <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4"> */}
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
               {photos.map((photo) => (
@@ -144,7 +146,7 @@ export default function EventDetails({
                   key={photo.id}
                   className="w-full h-64 bg-gray-200 rounded-lg overflow-hidden"
                 >
-                  <img
+                  <Image
                     src={photo.url}
                     alt="Event photo"
                     className="w-full h-full object-cover"
