@@ -39,6 +39,20 @@ const createOrRetrieveUser = async (props: { uuid: string; email: string }) => {
   return data[0];
 };
 
+const updateUserPlan = async (props: { userId: number; planId: number }) => {
+  const { data, error } = await supabase
+    .from("users")
+    .update({ plan_id: props.planId })
+    .eq("id", props.userId)
+    .select();
+
+  if (error) {
+    throw new Error(`Supabase user update failed: ${error.message}`);
+  }
+
+  return data[0];
+};
+
 const createEvent = async (props: {
   name: string;
   description: string;
@@ -47,7 +61,6 @@ const createEvent = async (props: {
   endDate: Date;
   userId: string;
 }) => {
-
   const { data, error } = await supabase
     .from("events")
     .insert({
@@ -68,18 +81,23 @@ const createEvent = async (props: {
   return data[0];
 };
 
-const createPhotos = async (props: {
-  eventId: number;
-  userId: string;
-  url: string;
-}[]) => {
+const createPhotos = async (
+  props: {
+    eventId: number;
+    userId: string;
+    url: string;
+  }[]
+) => {
   const { data, error } = await supabase
     .from("photos")
-    .upsert(props.map((photo) => ({
-      event_id: photo.eventId,
-      user_id: photo.userId,
-      url: photo.url,
-    })), { onConflict: "url" })
+    .upsert(
+      props.map((photo) => ({
+        event_id: photo.eventId,
+        user_id: photo.userId,
+        url: photo.url,
+      })),
+      { onConflict: "url" }
+    )
     .select();
 
   if (error) {
@@ -87,11 +105,10 @@ const createPhotos = async (props: {
   }
 
   return data;
-}
+};
 
 const deletePhotoObjects = async (props: { urls: string[] }) => {
-  const { data, error } = await supabase
-    .storage
+  const { data, error } = await supabase.storage
     .from(bucketName)
     .remove(props.urls.map((url) => url.split(`/${bucketName}/`)[1]));
 
@@ -100,6 +117,12 @@ const deletePhotoObjects = async (props: { urls: string[] }) => {
   }
 
   return data[0];
-}
+};
 
-export { createOrRetrieveUser, createEvent, createPhotos, deletePhotoObjects};
+export {
+  createOrRetrieveUser,
+  updateUserPlan,
+  createEvent,
+  createPhotos,
+  deletePhotoObjects,
+};

@@ -3,7 +3,7 @@ import { createClient } from "./client";
 
 const supabase = createClient();
 
-const fetchUserProfile = cache(async (userId) => {
+const fetchUser = cache(async (userId) => {
   const { data, error } = await supabase
     .from("users")
     .select()
@@ -36,13 +36,24 @@ const fetchPhotos = cache(async (eventId) => {
   return data;
 });
 
-const fetchRandomEventCode = async () => {
+const fetchPlans = cache(async () => {
   const { data, error } = await supabase
-    .rpc('get_random_event_code');
-  
+    .from("plans")
+    .select()
+    .eq("is_enabled", true)
+    .gt("price", 0);
+
+  if (error) throw error;
+
+  return data;
+});
+
+const fetchRandomEventCode = async () => {
+  const { data, error } = await supabase.rpc("get_random_event_code");
+
   if (error) throw error;
 
   return data;
 };
 
-export { fetchUserProfile, fetchEvent, fetchPhotos, fetchRandomEventCode };
+export { fetchUser, fetchEvent, fetchPhotos, fetchPlans, fetchRandomEventCode };

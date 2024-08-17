@@ -15,8 +15,10 @@ export const config = {
      * - $e (homepage)
      * - public/assets (assets folder)
      * - event/[id] (specific event page)
+     * - api/ (API calls)
+     * - api/* (API calls in subfolders)
      * Feel free to modify this pattern to include more paths.
      */
-    "/((?!_next/static|_next/image|favicon.ico|$|assets|error|confirm|event|join-event).*)",
+    "/((?!_next/static|_next/image|favicon.ico|$|assets|error|confirm|event|join-event|api/webhook).*)",
   ],
 };
