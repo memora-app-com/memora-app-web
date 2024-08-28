@@ -1,6 +1,6 @@
 import Stripe from "stripe";
 import { stripe } from "@/utils/stripe/config";
-import { updateUserPlan } from "@/utils/supabase/mutations-server";
+import { fulfillCheckout } from "@/utils/stripe/server";
 
 const relevantEvents = new Set(["checkout.session.completed"]);
 
@@ -25,7 +25,7 @@ export async function POST(req: Request) {
       switch (event.type) {
         case "checkout.session.completed":
           const checkoutSession = event.data.object as Stripe.Checkout.Session;
-          handleCheckoutSessionCompleted(checkoutSession);
+          fulfillCheckout(checkoutSession.id);
           break;
         default:
           throw new Error("Unhandled relevant event!");
@@ -33,7 +33,7 @@ export async function POST(req: Request) {
     } catch (error) {
       console.log(error);
       return new Response(
-        "Webhook handler failed. View your Next.js function logs.",
+        `Webhook handler failed. View your Next.js function logs. Event reference: ${event.id}`,
         {
           status: 400,
         }
@@ -45,20 +45,4 @@ export async function POST(req: Request) {
     });
   }
   return new Response(JSON.stringify({ received: true }));
-}
-
-// TODO: move this to a separate file
-async function handleCheckoutSessionCompleted(
-  checkoutSession: Stripe.Checkout.Session
-) {
-  console.log("handling");
-  if (checkoutSession.mode === "subscription") {
-    const userId = checkoutSession.metadata.user_id;
-    const planId = checkoutSession.metadata.plan_id;
-    console.log(userId, planId);
-    await updateUserPlan({ userId: Number(userId), planId: Number(planId) });
-  } else if (checkoutSession.mode === "payment") {
-    const paymentIntentId = checkoutSession.payment_intent;
-    // TODO: implement payment intent handling
-  }
 }

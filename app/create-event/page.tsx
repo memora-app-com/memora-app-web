@@ -1,8 +1,8 @@
 "use client";
 
-import { useState } from "react";
+import { use, useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import { createEvent } from "@/utils/supabase/mutations";
+import { createEventForUser } from "@/utils/supabase/mutations";
 import useAuthUser from "@/hooks/useUser";
 import z from "zod";
 import { addDays } from "date-fns";
@@ -25,7 +25,9 @@ import { CreateEventFormSchema } from "@/lib/form-schemas";
 import { LoadingIcon } from "@/components/LoadingIcon";
 import { DateTimePicker } from "@/components/ui/datetime-picker";
 import { ErrorAlert } from "@/components/ui/alert";
-import { fetchRandomEventCode } from "@/utils/supabase/queries";
+import { fetchRandomEventCode, fetchUser } from "@/utils/supabase/queries";
+import Link from "next/link";
+import { Skeleton } from "@/components/ui/skeleton";
 
 export default function CreateEventClient() {
   const router = useRouter();
@@ -34,10 +36,19 @@ export default function CreateEventClient() {
   const [isLoading, setIsLoading] = useState(false);
   const [errors, setErrors] = useState([]);
   const { authUser, authLoading, authError } = useAuthUser();
+  const [user, setUser] = useState(null);
 
   const form = useForm<z.infer<typeof CreateEventFormSchema>>({
     resolver: zodResolver(CreateEventFormSchema),
   });
+
+  useEffect(() => {
+    if (authUser) {
+      fetchUser(authUser.id).then((data) => {
+        setUser(data);
+      });
+    }
+  }, [authLoading]);
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -60,7 +71,7 @@ export default function CreateEventClient() {
         eventCode = await fetchRandomEventCode();
       }
 
-      const createdEvent = await createEvent({
+      const createdEvent = await createEventForUser({
         name: formValues.name,
         description: formValues.description,
         code: eventCode,
@@ -84,7 +95,20 @@ export default function CreateEventClient() {
     <div className="container mx-auto p-4 max-w-md">
       <h1 className="text-3xl font-bold mb-6">Create New Event</h1>
       {authLoading ? (
-        <LoadingIcon />
+        <>
+          <div className="flex justify-center">
+            <LoadingIcon />
+          </div>
+          <Skeleton className="h-4 mt-4 w-24" />
+          <Skeleton className="h-4 mt-1 w-60" />
+          <Skeleton className="h-8 mt-4" />
+          <Skeleton className="h-4 mt-4 w-24" />
+          <Skeleton className="h-4 mt-1 w-60" />
+          <Skeleton className="h-8 mt-4" />
+          <Skeleton className="h-4 mt-4 w-24" />
+          <Skeleton className="h-4 mt-1 w-60" />
+          <Skeleton className="h-8 mt-4" />
+        </>
       ) : (
         <Form {...form}>
           {errors.length !== 0 && (
@@ -227,6 +251,32 @@ export default function CreateEventClient() {
               </Button>
             </div>
           </form>
+          <FormDescription className="text-center mt-4">
+            {!user ? (
+              <Skeleton className="h-4 " />
+            ) : user && user.plan_id === 1 ? (
+              <>
+                This event will be limited to 5 photos, since you are on the
+                free trial.{" "}
+                <Link href="/plans" className="text-primary">
+                  Upgrade here.
+                </Link>
+              </>
+            ) : user && user.plan_id === 2 ? (
+              <>
+                This is the only event you can create, since you are on the
+                one-time plan.
+              </>
+            ) : (
+              user &&
+              user.plan_id === 3 && (
+                <>
+                  You can create as many events as you want, since you are on
+                  the unlimited plan.
+                </>
+              )
+            )}
+          </FormDescription>
         </Form>
       )}
     </div>

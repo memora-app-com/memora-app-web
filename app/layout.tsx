@@ -9,7 +9,7 @@ import { cn } from "@/utils/tailwind";
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: "Momentz",
+  title: "Memora",
   description: "Metadata description (REPLACE-THIS)",
 };
 

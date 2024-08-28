@@ -1,3 +1,4 @@
+import { updateUserPlan } from "@/utils/supabase/admin";
 import { NextResponse } from "next/server";
 import Stripe from "stripe";
 
@@ -21,8 +22,8 @@ export async function POST(req: Request) {
         quantity: 1,
       },
     ],
-    success_url: `${origin}/plans?success`,
-    cancel_url: `${origin}/plans`,
+    success_url: `${origin}/after-checkout/{CHECKOUT_SESSION_ID}`,
+    cancel_url: `${origin}/plans?canceled=true`,
     customer: user_stripe_reference,
     allow_promotion_codes: true,
     mode: billing_type === "one_time" ? "payment" : "subscription",

@@ -13,8 +13,20 @@ import { LoadingIcon } from "@/components/LoadingIcon";
 import { Button } from "@/components/ui/button";
 import useAuthUser from "@/hooks/useUser";
 import Link from "next/link";
+import { fulfillCheckout } from "@/utils/stripe/server";
+import { Skeleton } from "@/components/ui/skeleton";
+import {
+  AlertDialog,
+  AlertDialogContent,
+  AlertDialogHeader,
+  AlertDialogDescription,
+  AlertDialogTitle,
+  AlertDialogFooter,
+  AlertDialogCancel,
+  AlertDialogAction,
+} from "@/components/ui/alert-dialog";
 
-function PlansPage() {
+function PlansPage({ searchParams }: { searchParams: { canceled: true } }) {
   const [isLoading, setIsLoading] = useState(true);
   const { authUser, authLoading, authError } = useAuthUser();
   const [plans, setPlans] = useState([]);
@@ -58,8 +70,12 @@ function PlansPage() {
   return (
     <div className="flex flex-wrap justify-center">
       {isLoading ? (
-        <div className="flex items-center justify-center min-h-screen">
-          <LoadingIcon />
+        <div className="flex-col justify-center">
+          <div className="flex justify-center mt-4">
+            <LoadingIcon />
+          </div>
+          <Skeleton className="mt-4 w-80 h-60" />
+          <Skeleton className="mt-4 w-80 h-60" />
         </div>
       ) : (
         <div className="mt-10">

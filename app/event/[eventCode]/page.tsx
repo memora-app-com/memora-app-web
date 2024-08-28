@@ -146,8 +146,10 @@ export default function EventDetails({
                   key={photo.id}
                   className="w-full h-64 bg-gray-200 rounded-lg overflow-hidden"
                 >
-                  <Image
+                  <img
                     src={photo.url}
+                    // width={400}/
+                    // height={400}
                     alt="Event photo"
                     className="w-full h-full object-cover"
                     // className="h-auto max-w-full rounded-lg"

@@ -39,7 +39,7 @@ const createOrRetrieveUser = async (props: { uuid: string; email: string }) => {
   return data[0];
 };
 
-const updateUserPlan = async (props: { userId: number; planId: number }) => {
+const updateUserPlan = async (props: { userId: string; planId: number }) => {
   const { data, error } = await supabase
     .from("users")
     .update({ plan_id: props.planId })
@@ -53,7 +53,7 @@ const updateUserPlan = async (props: { userId: number; planId: number }) => {
   return data[0];
 };
 
-const createEvent = async (props: {
+const createEventForUser = async (props: {
   name: string;
   description: string;
   code: string;
@@ -61,7 +61,29 @@ const createEvent = async (props: {
   endDate: Date;
   userId: string;
 }) => {
-  const { data, error } = await supabase
+  const { data: user, error: userError } = await supabase
+    .from("users")
+    .select("*, events (*)")
+    .eq("id", props.userId)
+    .single();
+
+  if (userError) {
+    throw new Error(`Supabase user retrieval failed: ${userError.message}`);
+  }
+
+  if (!user) {
+    throw new Error(`User with ID ${props.userId} not found`);
+  }
+
+  let photosLimit = null;
+  if (user.plan_id === 1) {
+    if (user.events && user.events.length > 0) {
+      throw new Error("User already has an event");
+    }
+    photosLimit = 5;
+  }
+
+  const { data: event, error: eventError } = await supabase
     .from("events")
     .insert({
       name: props.name,
@@ -70,15 +92,19 @@ const createEvent = async (props: {
       start_date: props.startDate.toISOString(),
       end_date: props.endDate.toISOString(),
       host_id: props.userId,
+      photos_limit: photosLimit,
     })
     .select();
 
-  if (error) {
-    throw new Error(`Supabase event creation failed: ${error.message}`);
+  if (eventError) {
+    throw new Error(`Supabase event creation failed: ${eventError.message}`);
   }
 
-  console.log(data, error);
-  return data[0];
+  if (user.plan_id === 2) {
+    await updateUserPlan({ userId: props.userId, planId: 1 });
+  }
+
+  return event[0];
 };
 
 const createPhotos = async (
@@ -122,7 +148,7 @@ const deletePhotoObjects = async (props: { urls: string[] }) => {
 export {
   createOrRetrieveUser,
   updateUserPlan,
-  createEvent,
+  createEventForUser,
   createPhotos,
   deletePhotoObjects,
 };
