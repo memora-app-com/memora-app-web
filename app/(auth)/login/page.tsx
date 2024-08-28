@@ -53,7 +53,7 @@ export default function LoginPage({
 
   async function handleLogin(event: FormEvent<HTMLFormElement>): Promise<void> {
     event.preventDefault();
-    loginForm.handleSubmit(async (data) => {
+    await loginForm.handleSubmit(async (data) => {
       setIsLoading(true);
       const props = {
         email: data.email,
@@ -78,7 +78,7 @@ export default function LoginPage({
     event: FormEvent<HTMLFormElement>
   ): Promise<void> {
     event.preventDefault();
-    signupForm.handleSubmit(async (data) => {
+    await signupForm.handleSubmit(async (data) => {
       setIsLoading(true);
       const props = {
         name: data.name,

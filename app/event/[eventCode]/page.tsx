@@ -92,7 +92,7 @@ export default function EventDetails({
   return (
     <div className="container p-4">
       {authLoading || isLoading ? (
-        <LoadingIcon />
+        <LoadingIcon center />
       ) : (
         <div className="mb-4">
           <div className="text-center">
@@ -148,7 +148,7 @@ export default function EventDetails({
                 >
                   <img
                     src={photo.url}
-                    // width={400}/
+                    // width={400}
                     // height={400}
                     alt="Event photo"
                     className="w-full h-full object-cover"

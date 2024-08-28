@@ -66,7 +66,13 @@ const createEventForUser = async (props: {
     .select();
 
   if (eventError) {
-    throw new Error(`Supabase event creation failed: ${eventError.message}`);
+    if (eventError.code === "23505") {
+      throw new Error(
+        `Event with code ${props.code} already exists. 
+        Please choose a different code or leave it empty to generate one automatically.`
+      );
+    }
+    throw new Error(`Event creation failed: ${eventError.message}`);
   }
 
   if (user.plan_id === 2) {
