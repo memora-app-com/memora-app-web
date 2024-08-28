@@ -24,4 +24,18 @@ const updateUserPlan = async (props: { userId: string; planId: number }) => {
   return data;
 };
 
-export { updateUserPlan };
+const fetchUser = async (userId: string) => {
+  const { data, error } = await supabaseAdmin
+    .from("users")
+    .select("*, plan:plans(*)")
+    .eq("id", userId)
+    .single();
+
+  if (error) {
+    throw new Error(`Supabase user fetch failed: ${error.message}`);
+  }
+
+  return data;
+};
+
+export { updateUserPlan, fetchUser };

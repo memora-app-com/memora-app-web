@@ -13,18 +13,8 @@ import { LoadingIcon } from "@/components/LoadingIcon";
 import { Button } from "@/components/ui/button";
 import useAuthUser from "@/hooks/useUser";
 import Link from "next/link";
-import { fulfillCheckout } from "@/utils/stripe/server";
 import { Skeleton } from "@/components/ui/skeleton";
-import {
-  AlertDialog,
-  AlertDialogContent,
-  AlertDialogHeader,
-  AlertDialogDescription,
-  AlertDialogTitle,
-  AlertDialogFooter,
-  AlertDialogCancel,
-  AlertDialogAction,
-} from "@/components/ui/alert-dialog";
+import { signOut } from "@/utils/supabase/auth-helpers";
 
 function PlansPage({ searchParams }: { searchParams: { canceled: true } }) {
   const [isLoading, setIsLoading] = useState(true);
@@ -78,36 +68,57 @@ function PlansPage({ searchParams }: { searchParams: { canceled: true } }) {
           <Skeleton className="mt-4 w-80 h-60" />
         </div>
       ) : (
-        <div className="mt-10">
-          {plans.map((plan: any) => (
-            <Card key={plan.id} className="m-4 max-w-80">
-              <CardHeader>
-                <CardTitle>{plan.name}</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <p>{plan.description}</p>
-                <p className="font-bold mt-4 text-center text-xl">
-                  {plan.price}${" "}
-                  <span className="font-normal">
-                    {plan.billing_type === "monthly" ? (
-                      <>/ month</>
-                    ) : (
-                      plan.billing_type === "one_time" && <> one time</>
-                    )}
-                  </span>
-                </p>
-              </CardContent>
-              <CardFooter className="flex justify-center">
-                <Button onClick={() => handleClick(plan)}>
-                  {user.plan_id === plan.id ? "Chosen" : "Choose Plan"}
-                </Button>
-              </CardFooter>
-            </Card>
-          ))}
-          <div className="text-center font-light text-sm text-accent-foreground underline">
-            <Link href="/create-event">Continue free trial</Link>
+        <>
+          <div className="">
+            <form className="flex flex-wrap justify-end m-4" action={signOut}>
+              <Button variant="ghost-destructive">Log out</Button>
+            </form>
+            {plans.map((plan: any) => (
+              <Card key={plan.id} className="m-4 max-w-80">
+                <CardHeader>
+                  <CardTitle>{plan.name}</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <p>{plan.description}</p>
+                  <p className="font-bold mt-4 text-center text-xl">
+                    {plan.price}${" "}
+                    <span className="font-normal">
+                      {plan.billing_type === "monthly" ? (
+                        <>/ month</>
+                      ) : (
+                        plan.billing_type === "one_time" && <> one time</>
+                      )}
+                    </span>
+                  </p>
+                </CardContent>
+                <CardFooter className="flex-col justify-center">
+                  <Button
+                    onClick={() => handleClick(plan)}
+                    disabled={user.plan_id === plan.id}
+                  >
+                    {user.plan_id === plan.id ? "Chosen" : "Choose Plan"}
+                  </Button>
+                  {user.plan_id === plan.id && (
+                    <Link
+                      href={`/cancel-payment`}
+                      className="text-accent-foreground text-sm mt-2"
+                    >
+                      {plan.billing_type === "monthly"
+                        ? "Cancel plan"
+                        : plan.billing_type === "one_time" &&
+                          "Refund and cancel plan"}
+                    </Link>
+                  )}
+                </CardFooter>
+              </Card>
+            ))}
+            {user.plan_id === 1 && (
+              <div className="text-center font-light text-sm text-accent-foreground underline">
+                <Link href="/create-event">Continue free trial</Link>
+              </div>
+            )}
           </div>
-        </div>
+        </>
       )}
     </div>
   );

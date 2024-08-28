@@ -22,6 +22,7 @@ const AfterCheckout = ({ params }: { params: { sessionId: string } }) => {
   const [isDialogOpen, setIsDialogOpen] = React.useState(false);
   const [error, setError] = React.useState(null);
   const router = useRouter();
+
   useEffect(() => {
     async function handleCheckoutSession() {
       setIsDialogOpen(true);
