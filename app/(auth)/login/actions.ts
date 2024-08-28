@@ -1,48 +1,45 @@
 "use server";
 
-import { revalidatePath } from "next/cache";
-import { redirect } from "next/navigation";
-
 import { createClient } from "@/utils/supabase/server";
 
-export async function login(formData: FormData) {
+export async function login(props: { email: string; password: string }) {
   const supabase = createClient();
 
   //TODO: Add form validation but inside the client component
 
-  // type-casting here for convenience
-  // in practice, you should validate your inputs
-  const data = {
-    email: formData.get("email") as string,
-    password: formData.get("password") as string,
-  };
-
-  const { error } = await supabase.auth.signInWithPassword(data);
+  const { error } = await supabase.auth.signInWithPassword({
+    email: props.email as string,
+    password: props.password as string,
+  });
 
   if (error) {
-    redirect("/login?error=" + error.message);
+    return {
+      status: 400,
+      error: error.message,
+    };
   }
 
-  revalidatePath("/", "layout");
-  redirect("/");
+  return { status: 200 };
 }
 
-export async function signup(formData: FormData) {
+export async function signup(props: {
+  name: string;
+  email: string;
+  password: string;
+}) {
   const supabase = createClient();
-
-  // type-casting here for convenience
-  // in practice, you should validate your inputs
-  const data = {
-    email: formData.get("email") as string,
-    password: formData.get("password") as string,
-  };
-
-  const { error } = await supabase.auth.signUp(data);
+  const { data, error } = await supabase.auth.signUp({
+    email: props.email,
+    password: props.password,
+    options: { data: { full_name: props.name } },
+  });
 
   if (error) {
-    redirect("/login?error=" + error.message);
+    return {
+      status: 400,
+      error: error.message,
+    };
   }
 
-  revalidatePath("/", "layout");
-  redirect("/login?message=Check email to continue sign in proces");
+  return { status: 200 };
 }

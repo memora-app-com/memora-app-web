@@ -6,6 +6,13 @@ export const LogInFormSchema = z.object({
   password: z.string(),
 });
 
+export const SignUpFormSchema = z.object({
+  name: z.string(),
+  email: z.string().email(),
+  password: z.string(),
+  // confirmPassword: z.string(),
+});
+
 export const CreateEventFormSchema = z.object({
   code: z.string()
     .optional(),

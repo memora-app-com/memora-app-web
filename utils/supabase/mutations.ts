@@ -8,37 +8,6 @@ import type { Database, Tables } from "@/database.types";
 const supabase = createClient();
 const bucketName = "momentz-bucket";
 
-const createOrRetrieveUser = async (props: { uuid: string; email: string }) => {
-  const { data: retrievedUser, error: retrieveError } = await supabase
-    .from("users")
-    .select("*")
-    .eq("id", props.uuid)
-    .single();
-
-  if (retrieveError) {
-    throw new Error(`Supabase user retrieval failed: ${retrieveError.message}`);
-  }
-
-  if (retrievedUser) {
-    return retrievedUser;
-  }
-
-  const { data, error } = await supabase
-    .from("users")
-    .insert({
-      id: props.uuid,
-      email: props.email,
-      name: "John Doe",
-    })
-    .select();
-
-  if (error) {
-    throw new Error(`Supabase customer creation failed: ${error.message}`);
-  }
-
-  return data[0];
-};
-
 const updateUserPlan = async (props: { userId: string; planId: number }) => {
   const { data, error } = await supabase
     .from("users")
@@ -145,10 +114,4 @@ const deletePhotoObjects = async (props: { urls: string[] }) => {
   return data[0];
 };
 
-export {
-  createOrRetrieveUser,
-  updateUserPlan,
-  createEventForUser,
-  createPhotos,
-  deletePhotoObjects,
-};
+export { updateUserPlan, createEventForUser, createPhotos, deletePhotoObjects };

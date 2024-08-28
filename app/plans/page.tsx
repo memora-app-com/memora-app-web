@@ -48,6 +48,7 @@ function PlansPage({ searchParams }: { searchParams: { canceled: true } }) {
         plan_stripe_reference: plan.stripe_reference,
         plan_id: plan.id,
         user_stripe_reference: user.stripe_reference,
+        email: user.email,
         user_id: user.id,
         billing_type: plan.billing_type,
       }),

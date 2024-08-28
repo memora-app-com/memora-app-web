@@ -3,13 +3,13 @@ import { type NextRequest } from "next/server";
 
 import { createClient } from "@/utils/supabase/server";
 import { redirect } from "next/navigation";
-import { createOrRetrieveUser } from "@/utils/supabase/mutations";
+import { createOrRetrieveUser } from "@/utils/supabase/admin";
 
 export async function GET(request: NextRequest) {
   const { searchParams } = new URL(request.url);
   const token_hash = searchParams.get("token_hash");
   const type = searchParams.get("type") as EmailOtpType | null;
-  const next = searchParams.get("next") ?? "/";
+  const next = searchParams.get("next") ?? "/plans";
 
   if (token_hash && type) {
     const supabase = createClient();
@@ -18,12 +18,15 @@ export async function GET(request: NextRequest) {
       type,
       token_hash,
     });
-    console.log(error);
+
     if (!error) {
       // create user entity in database
       const authUser = (await supabase.auth.getUser()).data.user;
-      const dbUser = { uuid: authUser.id, email: authUser.email };
-      createOrRetrieveUser(dbUser);
+      await createOrRetrieveUser({
+        id: authUser.id,
+        email: authUser.email,
+        name: authUser.user_metadata.full_name,
+      });
 
       // redirect user to specified redirect URL or root of app
       redirect(next);

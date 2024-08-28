@@ -1,11 +1,12 @@
 "use server";
 
-import { updateUserPlan } from "../supabase/admin";
+import { updateUserPlanAndReference } from "../supabase/admin";
 import { stripe } from "./config";
 
 export async function fulfillCheckout(sessionId: string) {
   const checkoutSession = await stripe.checkout.sessions.retrieve(sessionId);
 
+  const customerReference = checkoutSession.customer;
   const userId = checkoutSession.metadata.user_id;
   const planId = checkoutSession.metadata.plan_id;
   if (!userId || !planId) {
@@ -20,5 +21,9 @@ export async function fulfillCheckout(sessionId: string) {
     );
   }
 
-  await updateUserPlan({ userId: userId, planId: Number(planId) });
+  await updateUserPlanAndReference({
+    userId: userId,
+    planId: Number(planId),
+    stripeReference: customerReference as string,
+  });
 }

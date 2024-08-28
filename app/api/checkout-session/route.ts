@@ -1,4 +1,3 @@
-import { updateUserPlan } from "@/utils/supabase/admin";
 import { NextResponse } from "next/server";
 import Stripe from "stripe";
 
@@ -12,6 +11,7 @@ export async function POST(req: Request) {
   const plan_stripe_reference = data.plan_stripe_reference as string;
   const plan_id = data.plan_id as number;
   const user_stripe_reference = data.user_stripe_reference as string;
+  const email = data.email as string;
   const user_id = data.user_id as number;
   const billing_type = data.billing_type as string;
 
@@ -24,7 +24,6 @@ export async function POST(req: Request) {
     ],
     success_url: `${origin}/after-checkout/{CHECKOUT_SESSION_ID}`,
     cancel_url: `${origin}/plans?canceled=true`,
-    customer: user_stripe_reference,
     allow_promotion_codes: true,
     mode: billing_type === "one_time" ? "payment" : "subscription",
     metadata: {
@@ -32,6 +31,16 @@ export async function POST(req: Request) {
       plan_id: plan_id,
     },
   };
+
+  if (user_stripe_reference) {
+    params.customer = user_stripe_reference;
+  } else if (email) {
+    params.customer_email = email;
+  }
+
+  if (billing_type === "one_time") {
+    params.customer_creation = "always";
+  }
 
   const checkoutSession: Stripe.Checkout.Session =
     await stripe.checkout.sessions.create(params);

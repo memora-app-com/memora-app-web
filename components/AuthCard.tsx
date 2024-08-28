@@ -17,3 +17,4 @@ const AuthCard = React.forwardRef<
 AuthCard.displayName = "AuthCard";
 
 export default AuthCard;
+// not used
