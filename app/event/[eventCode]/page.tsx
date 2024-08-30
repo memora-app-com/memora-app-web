@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 
 import useAuthUser from "@/hooks/useUser";
 import { fetchEvent, fetchPhotos } from "@/utils/supabase/queries";
@@ -20,7 +20,7 @@ import {
 import MultipleImageUploader from "./MultipleImageUploader";
 import { createPhotos, deletePhotoObjects } from "@/utils/supabase/mutations";
 import { UploadedFile } from "./UploadedFile";
-import Image from "next/image";
+import Gallery from "./Gallery";
 
 export default function EventDetails({
   params,
@@ -31,7 +31,6 @@ export default function EventDetails({
   const [isLoading, setIsLoading] = useState(false);
   const [isSaveLoading, setIsSaveLoading] = useState(false);
   const [photos, setPhotos] = useState([]);
-  const [newPhoto, setNewPhoto] = useState(null);
   const { authUser, authLoading, authError } = useAuthUser();
   const [uploadedFiles, setUploadedFiles] = useState<UploadedFile[]>([]);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
@@ -110,7 +109,7 @@ export default function EventDetails({
             </DialogTrigger>
             <DialogContent className="sm:max-w-[425px]">
               <DialogHeader>
-                <DialogTitle>Upload your photos</DialogTitle>
+                <DialogTitle>Upload your photos</DialogTitle>ß
                 <DialogDescription>
                   Upload photos here. Wait for them to load, then click save
                   when you&rsquo;re done.
@@ -135,29 +134,7 @@ export default function EventDetails({
             </DialogContent>
           </Dialog>
 
-          <div>
-            <h2 className="text-xl font-bold mb-4">Gallery</h2>
-            {/* TODO: Work a bit with these styles */}
-            {/* examples: https://flowbite.com/docs/components/gallery/ */}
-            {/* <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4"> */}
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-              {photos.map((photo) => (
-                <div
-                  key={photo.id}
-                  className="w-full h-64 bg-gray-200 rounded-lg overflow-hidden"
-                >
-                  <img
-                    src={photo.url}
-                    // width={400}
-                    // height={400}
-                    alt="Event photo"
-                    className="w-full h-full object-cover"
-                    // className="h-auto max-w-full rounded-lg"
-                  />
-                </div>
-              ))}
-            </div>
-          </div>
+          <Gallery photos={photos} />
         </div>
       )}
     </div>
