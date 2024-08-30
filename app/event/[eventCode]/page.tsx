@@ -16,11 +16,13 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-
+import { toast } from "sonner";
 import MultipleImageUploader from "./MultipleImageUploader";
 import { createPhotos, deletePhotoObjects } from "@/utils/supabase/mutations";
 import { UploadedFile } from "./UploadedFile";
 import Gallery from "./Gallery";
+import { Clipboard, ClipboardCheck, Share2 } from "lucide-react";
+import { useQRCode } from "next-qrcode";
 
 export default function EventDetails({
   params,
@@ -33,7 +35,10 @@ export default function EventDetails({
   const [photos, setPhotos] = useState([]);
   const { authUser, authLoading, authError } = useAuthUser();
   const [uploadedFiles, setUploadedFiles] = useState<UploadedFile[]>([]);
-  const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [isUploadDialogOpen, setIsUploadDialogOpen] = useState(false);
+  const [isInviteDialogOpen, setIsInviteDialogOpen] = useState(false);
+  const [isLinkCopied, setIsLinkCopied] = useState(false);
+  const { Canvas } = useQRCode();
 
   useEffect(() => {
     setIsLoading(true);
@@ -64,12 +69,12 @@ export default function EventDetails({
     }));
 
     createPhotos(photos);
-    setIsDialogOpen(false);
+    setIsUploadDialogOpen(false);
     setIsSaveLoading(false);
   }
 
-  function handleDialogChange(open: boolean): void {
-    setIsDialogOpen(open);
+  function handleUploadDialogChange(open: boolean): void {
+    setIsUploadDialogOpen(open);
     const photoUrls = [];
     if (!open) {
       uploadedFiles.forEach((file) => {
@@ -88,6 +93,27 @@ export default function EventDetails({
     }
   }
 
+  function handleInviteDialogChange(open: boolean): void {
+    setIsInviteDialogOpen(open);
+  }
+
+  function getInviteLink(): string {
+    return `${window.location.origin
+      .replace("https://", "")
+      .replace("http://", "")}/join-event?code=${event.code}`;
+  }
+
+  function handleCopyInviteLink(
+    event: React.MouseEvent<HTMLButtonElement, MouseEvent>
+  ): void {
+    event.preventDefault();
+    navigator.clipboard.writeText(getInviteLink());
+    toast("Copied to clipboard", {
+      description: "The link has been copied to your clipboard",
+    });
+    setIsLinkCopied(true);
+  }
+
   return (
     <div className="container p-4">
       {authLoading || isLoading ? (
@@ -98,13 +124,72 @@ export default function EventDetails({
             <h1 className="text-3xl font-bold">
               {event.name !== "" ? event.name : "Joined event"}
             </h1>
-            <p className="text-sm text-muted-foreground "># {event.code}</p>
           </div>
 
-          <Dialog open={isDialogOpen} onOpenChange={handleDialogChange}>
+          <Dialog
+            open={isInviteDialogOpen}
+            onOpenChange={handleInviteDialogChange}
+          >
             <DialogTrigger asChild>
               <div className="text-center">
-                <Button className="mt-8">Upload photos</Button>
+                <Button variant="ghost" className="">
+                  <p className="text-sm text-muted-foreground ">
+                    # {event.code}{" "}
+                  </p>
+                  <Share2 size={20} className="text-muted-foreground ml-2" />
+                </Button>
+              </div>
+            </DialogTrigger>
+            <DialogContent className="sm:max-w-[425px]">
+              <DialogHeader>
+                <DialogTitle>Invite your friends</DialogTitle>
+                <DialogDescription>
+                  Share the event code with your friends to invite them to the
+                  event.
+                </DialogDescription>
+              </DialogHeader>
+              <div className="text-center">
+                <Button
+                  variant="ghost"
+                  className="mb-4"
+                  onClick={handleCopyInviteLink}
+                >
+                  <p className="text-sm">{getInviteLink()}</p>
+                  {isLinkCopied ? (
+                    <ClipboardCheck
+                      size={20}
+                      className="text-muted-foreground ml-2"
+                    />
+                  ) : (
+                    <Clipboard
+                      size={20}
+                      className="text-muted-foreground ml-2"
+                    />
+                  )}
+                </Button>
+                <div className="flex items-center justify-center">
+                  <Canvas
+                    text={getInviteLink()}
+                    options={{
+                      errorCorrectionLevel: "M",
+                      margin: 3,
+                      scale: 4,
+                      width: 200,
+                    }}
+                  />
+                </div>
+                <p className="font-bold mt-4">Join code: #{event.code}</p>
+              </div>
+            </DialogContent>
+          </Dialog>
+
+          <Dialog
+            open={isUploadDialogOpen}
+            onOpenChange={handleUploadDialogChange}
+          >
+            <DialogTrigger asChild>
+              <div className="text-center">
+                <Button className="mt-4">Upload photos</Button>
               </div>
             </DialogTrigger>
             <DialogContent className="sm:max-w-[425px]">
