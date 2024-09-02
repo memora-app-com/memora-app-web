@@ -130,16 +130,16 @@ export default function EventDetails({
             open={isInviteDialogOpen}
             onOpenChange={handleInviteDialogChange}
           >
-            <DialogTrigger asChild>
-              <div className="text-center">
-                <Button variant="ghost" className="">
+            <div className="text-center">
+              <DialogTrigger asChild>
+                <Button variant="ghost">
                   <p className="text-sm text-muted-foreground ">
                     # {event.code}{" "}
                   </p>
                   <Share2 size={20} className="text-muted-foreground ml-2" />
                 </Button>
-              </div>
-            </DialogTrigger>
+              </DialogTrigger>
+            </div>
             <DialogContent className="sm:max-w-[425px]">
               <DialogHeader>
                 <DialogTitle>Invite your friends</DialogTitle>
@@ -187,11 +187,11 @@ export default function EventDetails({
             open={isUploadDialogOpen}
             onOpenChange={handleUploadDialogChange}
           >
-            <DialogTrigger asChild>
-              <div className="text-center">
-                <Button className="mt-4">Upload photos</Button>
-              </div>
-            </DialogTrigger>
+            <div className="text-center">
+              <DialogTrigger asChild>
+                <Button className="mt-2">Upload photos</Button>
+              </DialogTrigger>
+            </div>
             <DialogContent className="sm:max-w-[425px]">
               <DialogHeader>
                 <DialogTitle>Upload your photos</DialogTitle>
