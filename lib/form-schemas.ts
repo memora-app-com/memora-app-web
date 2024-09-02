@@ -15,7 +15,7 @@ export const SignUpFormSchema = z.object({
 
 export const CreateEventFormSchema = z
   .object({
-    name: z.string().min(1, "Name cannot be empty"),
+    title: z.string().min(1, "Name cannot be empty"),
     code: z.string().optional(),
     description: z.string().optional(),
     startsNow: z.boolean().default(true),

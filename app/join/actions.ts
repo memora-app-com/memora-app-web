@@ -10,6 +10,6 @@ export async function loginAnonymously() {
   const { error } = await supabase.auth.signInAnonymously();
 
   if (error) {
-    redirect("/join-event?error=" + error.message);
+    redirect("/join?error=" + error.message);
   }
 }

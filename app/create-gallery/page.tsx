@@ -29,7 +29,7 @@ import { fetchRandomEventCode, fetchUser } from "@/utils/supabase/queries";
 import Link from "next/link";
 import { Skeleton } from "@/components/ui/skeleton";
 
-export default function CreateEventClient() {
+export default function CreateGallery() {
   const router = useRouter(); //TODO: Research: router.push vs window.location.href?
 
   const [isLoading, setIsLoading] = useState(false);
@@ -73,7 +73,7 @@ export default function CreateEventClient() {
           }
 
           const createdEvent = await createEventForUser({
-            name: formValues.name,
+            title: formValues.title,
             description: formValues.description,
             code: eventCode,
             startDate: formValues.startDate,
@@ -121,10 +121,10 @@ export default function CreateEventClient() {
             <form onSubmit={handleSubmit}>
               <FormField
                 control={form.control}
-                name="name"
+                name="title"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Event name</FormLabel>
+                    <FormLabel>Event title</FormLabel>
                     <FormControl>
                       <Input
                         type="text"

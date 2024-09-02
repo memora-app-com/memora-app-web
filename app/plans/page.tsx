@@ -115,7 +115,7 @@ function PlansPage({ searchParams }: { searchParams: { canceled: true } }) {
             ))}
             {user.plan_id === 1 && (
               <div className="text-center font-light text-sm text-accent-foreground underline">
-                <Link href="/create-event">Continue free trial</Link>
+                <Link href="/create-gallery">Continue free trial</Link>
               </div>
             )}
           </div>

@@ -23,7 +23,7 @@ const updateUserPlan = async (props: { userId: string; planId: number }) => {
 };
 
 const createEventForUser = async (props: {
-  name: string;
+  title: string;
   description: string;
   code: string;
   startDate: Date;
@@ -55,7 +55,7 @@ const createEventForUser = async (props: {
   const { data: event, error: eventError } = await supabase
     .from("events")
     .insert({
-      name: props.name,
+      title: props.title,
       description: props.description,
       code: props.code,
       start_date: props.startDate.toISOString(),

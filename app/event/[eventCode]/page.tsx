@@ -100,7 +100,7 @@ export default function EventDetails({
   function getInviteLink(): string {
     return `${window.location.origin
       .replace("https://", "")
-      .replace("http://", "")}/join-event?code=${event.code}`;
+      .replace("http://", "")}/join?code=${event.code}`;
   }
 
   function handleCopyInviteLink(
@@ -122,7 +122,7 @@ export default function EventDetails({
         <div className="mb-4">
           <div className="text-center">
             <h1 className="text-3xl font-bold">
-              {event.name !== "" ? event.name : "Joined event"}
+              {event.title !== "" ? event.title : "Joined event"}
             </h1>
           </div>
 

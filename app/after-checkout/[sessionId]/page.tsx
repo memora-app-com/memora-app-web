@@ -28,7 +28,7 @@ const AfterCheckout = ({ params }: { params: { sessionId: string } }) => {
       setIsDialogOpen(true);
       try {
         await fulfillCheckout(params.sessionId);
-        router.push("/create-event");
+        router.push("/create-gallery");
       } catch (error) {
         setError(error);
       }
