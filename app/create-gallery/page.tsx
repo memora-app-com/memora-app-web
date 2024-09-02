@@ -2,7 +2,7 @@
 
 import { use, useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import { createEventForUser } from "@/utils/supabase/mutations";
+import { createGalleryForUser } from "@/utils/supabase/mutations";
 import useAuthUser from "@/hooks/useUser";
 import z from "zod";
 import { addDays } from "date-fns";
@@ -21,11 +21,11 @@ import {
 import { Checkbox } from "@/components/ui/checkbox";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
-import { CreateEventFormSchema } from "@/lib/form-schemas";
+import { CreateGalleryFormSchema } from "@/lib/form-schemas";
 import { LoadingIcon } from "@/components/LoadingIcon";
 import { DateTimePicker } from "@/components/ui/datetime-picker";
 import { ErrorAlert } from "@/components/ui/alert";
-import { fetchRandomEventCode, fetchUser } from "@/utils/supabase/queries";
+import { fetchRandomGalleryCode, fetchUser } from "@/utils/supabase/queries";
 import Link from "next/link";
 import { Skeleton } from "@/components/ui/skeleton";
 
@@ -37,8 +37,8 @@ export default function CreateGallery() {
   const { authUser, authLoading, authError } = useAuthUser();
   const [user, setUser] = useState(null);
 
-  const form = useForm<z.infer<typeof CreateEventFormSchema>>({
-    resolver: zodResolver(CreateEventFormSchema),
+  const form = useForm<z.infer<typeof CreateGalleryFormSchema>>({
+    resolver: zodResolver(CreateGalleryFormSchema),
   });
 
   useEffect(() => {
@@ -61,27 +61,27 @@ export default function CreateGallery() {
     try {
       await form
         .handleSubmit(async (formData) => {
-          const formValues = CreateEventFormSchema.parse(formData);
+          const formValues = CreateGalleryFormSchema.parse(formData);
 
-          let eventCode = formValues.code;
+          let galleryCode = formValues.code;
           if (
-            eventCode === undefined ||
-            eventCode === null ||
-            eventCode === ""
+            galleryCode === undefined ||
+            galleryCode === null ||
+            galleryCode === ""
           ) {
-            eventCode = await fetchRandomEventCode();
+            galleryCode = await fetchRandomGalleryCode();
           }
 
-          const createdEvent = await createEventForUser({
+          const createdGallery = await createGalleryForUser({
             title: formValues.title,
             description: formValues.description,
-            code: eventCode,
+            code: galleryCode,
             startDate: formValues.startDate,
             endDate: formValues.endDate,
             userId: authUser.id,
           });
 
-          router.push(`/event/${createdEvent.code}`);
+          router.push(`/gallery/${createdGallery.code}`);
         })()
         .then(() => {
           setIsLoading(false);
@@ -99,7 +99,7 @@ export default function CreateGallery() {
     <>
       {isLoading && <LoadingIcon center />}
       <div className="container mx-auto p-4 max-w-md">
-        <h1 className="text-3xl font-bold mb-6">Create New Event</h1>
+        <h1 className="text-3xl font-bold mb-6">Create New Gallery</h1>
         {authLoading ? (
           <>
             <div className="flex justify-center">
@@ -124,7 +124,7 @@ export default function CreateGallery() {
                 name="title"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Event title</FormLabel>
+                    <FormLabel>Gallery title</FormLabel>
                     <FormControl>
                       <Input
                         type="text"
@@ -143,9 +143,9 @@ export default function CreateGallery() {
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel>
-                      Event code
+                      Gallery code
                       <p className="text-xs text-muted-foreground font-normal">
-                        This code will be used by guests to join the event
+                        This code will be used by guests to join the gallery
                       </p>
                     </FormLabel>
                     <div className="relative table w-full">
@@ -180,7 +180,7 @@ export default function CreateGallery() {
                     <FormControl>
                       <Input
                         type="text"
-                        placeholder="Enter the event description (optional)"
+                        placeholder="Enter the gallery description (optional)"
                         {...field}
                       />
                     </FormControl>
@@ -203,7 +203,7 @@ export default function CreateGallery() {
                         value={field.value || new Date()}
                         onChange={field.onChange}
                         disabled={form.watch("startsNow", true)}
-                        placeholder="Pick start of event"
+                        placeholder="Pick start date of gallery"
                       />
                       <FormMessage />
                     </FormItem>
@@ -214,7 +214,7 @@ export default function CreateGallery() {
                   name="endDate"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>End date</FormLabel>
+                      <FormLabel>Expiration date</FormLabel>
                       <FormControl>
                         <DateTimePicker
                           hourCycle={24}
@@ -223,7 +223,7 @@ export default function CreateGallery() {
                           value={field.value || addDays(new Date(), 30)}
                           onChange={field.onChange}
                           disabled={form.watch("startsNow", true)}
-                          placeholder="Pick end of event"
+                          placeholder="Pick expiration date of gallery"
                         />
                       </FormControl>
                     </FormItem>
@@ -243,10 +243,11 @@ export default function CreateGallery() {
                         />
                       </FormControl>
                       <FormLabel className="font-normal">
-                        Event starts now and ends in 30 days
+                        Gallery starts now and expires in 30 days
                         <p className="text-xs text-muted-foreground font-normal mt-2">
-                          The gallery will be view-only after the end date.
-                          Uncheck this to set a custom start and end date.
+                          The gallery will be view-only after the expiration
+                          date. Uncheck this to set a custom start and
+                          expiration date.
                         </p>
                       </FormLabel>
                     </FormItem>
@@ -256,7 +257,7 @@ export default function CreateGallery() {
 
               <div className="mt-4 flex justify-end">
                 <Button type="submit" disabled={isLoading}>
-                  {isLoading ? "Creating..." : "Create Event"}
+                  {isLoading ? "Creating..." : "Create Gallery"}
                 </Button>
               </div>
             </form>
@@ -265,7 +266,7 @@ export default function CreateGallery() {
                 <Skeleton className="h-4 " />
               ) : user && user.plan_id === 1 ? (
                 <>
-                  This event will be limited to 5 photos, since you are on the
+                  This gallery will be limited to 5 photos, since you are on the
                   free trial.{" "}
                   <Link href="/plans" className="text-primary">
                     Upgrade here.
@@ -273,15 +274,15 @@ export default function CreateGallery() {
                 </>
               ) : user && user.plan_id === 2 ? (
                 <>
-                  This is the only event you can create, since you are on the
+                  This is the only gallery you can create, since you are on the
                   one-time plan.
                 </>
               ) : (
                 user &&
                 user.plan_id === 3 && (
                   <>
-                    You can create as many events as you want, since you are on
-                    the unlimited plan.
+                    You can create as many galleries as you want, since you are
+                    on the unlimited plan.
                   </>
                 )
               )}

@@ -9,172 +9,172 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
-      events: {
+      galleries: {
         Row: {
-          code: string;
-          created_at: string;
-          description: string | null;
-          end_date: string;
-          host_id: string;
-          id: number;
-          name: string;
-          photos_limit: number | null;
-          start_date: string;
-        };
+          code: string
+          created_at: string
+          description: string | null
+          end_date: string
+          host_id: string
+          id: number
+          photos_limit: number | null
+          start_date: string
+          title: string
+        }
         Insert: {
-          code: string;
-          created_at?: string;
-          description?: string | null;
-          end_date: string;
-          host_id?: string;
-          id?: number;
-          name?: string;
-          photos_limit?: number | null;
-          start_date?: string;
-        };
+          code: string
+          created_at?: string
+          description?: string | null
+          end_date: string
+          host_id?: string
+          id?: number
+          photos_limit?: number | null
+          start_date?: string
+          title?: string
+        }
         Update: {
-          code?: string;
-          created_at?: string;
-          description?: string | null;
-          end_date?: string;
-          host_id?: string;
-          id?: number;
-          name?: string;
-          photos_limit?: number | null;
-          start_date?: string;
-        };
+          code?: string
+          created_at?: string
+          description?: string | null
+          end_date?: string
+          host_id?: string
+          id?: number
+          photos_limit?: number | null
+          start_date?: string
+          title?: string
+        }
         Relationships: [
           {
-            foreignKeyName: "events_host_id_fkey";
-            columns: ["host_id"];
-            isOneToOne: false;
-            referencedRelation: "users";
-            referencedColumns: ["id"];
-          }
-        ];
-      };
+            foreignKeyName: "events_host_id_fkey"
+            columns: ["host_id"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       photos: {
         Row: {
-          created_at: string;
-          event_id: number;
-          id: number;
-          url: string;
-          user_id: string | null;
-        };
+          created_at: string
+          gallery_id: number
+          id: number
+          url: string
+          user_id: string | null
+        }
         Insert: {
-          created_at?: string;
-          event_id: number;
-          id?: number;
-          url: string;
-          user_id?: string | null;
-        };
+          created_at?: string
+          gallery_id: number
+          id?: number
+          url: string
+          user_id?: string | null
+        }
         Update: {
-          created_at?: string;
-          event_id?: number;
-          id?: number;
-          url?: string;
-          user_id?: string | null;
-        };
+          created_at?: string
+          gallery_id?: number
+          id?: number
+          url?: string
+          user_id?: string | null
+        }
         Relationships: [
           {
-            foreignKeyName: "photos_event_id_fkey";
-            columns: ["event_id"];
-            isOneToOne: false;
-            referencedRelation: "events";
-            referencedColumns: ["id"];
+            foreignKeyName: "photos_event_id_fkey"
+            columns: ["gallery_id"]
+            isOneToOne: false
+            referencedRelation: "galleries"
+            referencedColumns: ["id"]
           },
           {
-            foreignKeyName: "photos_user_id_fkey";
-            columns: ["user_id"];
-            isOneToOne: false;
-            referencedRelation: "users";
-            referencedColumns: ["id"];
-          }
-        ];
-      };
+            foreignKeyName: "photos_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       plans: {
         Row: {
-          billing_type: Database["public"]["Enums"]["billing_type"];
-          description: string | null;
-          id: number;
-          is_enabled: boolean;
-          name: string;
-          price: number;
-          stripe_reference: string;
-        };
+          billing_type: Database["public"]["Enums"]["billing_type"]
+          description: string | null
+          id: number
+          is_enabled: boolean
+          name: string
+          price: number
+          stripe_reference: string
+        }
         Insert: {
-          billing_type: Database["public"]["Enums"]["billing_type"];
-          description?: string | null;
-          id?: number;
-          is_enabled?: boolean;
-          name: string;
-          price: number;
-          stripe_reference?: string;
-        };
+          billing_type: Database["public"]["Enums"]["billing_type"]
+          description?: string | null
+          id?: number
+          is_enabled?: boolean
+          name: string
+          price: number
+          stripe_reference?: string
+        }
         Update: {
-          billing_type?: Database["public"]["Enums"]["billing_type"];
-          description?: string | null;
-          id?: number;
-          is_enabled?: boolean;
-          name?: string;
-          price?: number;
-          stripe_reference?: string;
-        };
-        Relationships: [];
-      };
+          billing_type?: Database["public"]["Enums"]["billing_type"]
+          description?: string | null
+          id?: number
+          is_enabled?: boolean
+          name?: string
+          price?: number
+          stripe_reference?: string
+        }
+        Relationships: []
+      }
       users: {
         Row: {
-          created_at: string;
-          email: string;
-          id: string;
-          name: string | null;
-          plan_id: number;
-          stripe_reference: string;
-        };
+          created_at: string
+          email: string
+          id: string
+          name: string | null
+          plan_id: number
+          stripe_reference: string
+        }
         Insert: {
-          created_at?: string;
-          email: string;
-          id?: string;
-          name?: string | null;
-          plan_id?: number;
-          stripe_reference?: string;
-        };
+          created_at?: string
+          email: string
+          id?: string
+          name?: string | null
+          plan_id?: number
+          stripe_reference?: string
+        }
         Update: {
-          created_at?: string;
-          email?: string;
-          id?: string;
-          name?: string | null;
-          plan_id?: number;
-          stripe_reference?: string;
-        };
+          created_at?: string
+          email?: string
+          id?: string
+          name?: string | null
+          plan_id?: number
+          stripe_reference?: string
+        }
         Relationships: [
           {
-            foreignKeyName: "users_plan_id_fkey";
-            columns: ["plan_id"];
-            isOneToOne: false;
-            referencedRelation: "plans";
-            referencedColumns: ["id"];
-          }
-        ];
-      };
-    };
+            foreignKeyName: "users_plan_id_fkey"
+            columns: ["plan_id"]
+            isOneToOne: false
+            referencedRelation: "plans"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+    }
     Views: {
-      [_ in never]: never;
-    };
+      [_ in never]: never
+    }
     Functions: {
-      get_random_event_code: {
-        Args: Record<PropertyKey, never>;
-        Returns: string;
-      };
-    };
+      get_random_gallery_code: {
+        Args: Record<PropertyKey, never>
+        Returns: string
+      }
+    }
     Enums: {
-      billing_type: "free_trial" | "one_time" | "monthly";
-    };
+      billing_type: "free_trial" | "one_time" | "monthly"
+    }
     CompositeTypes: {
-      [_ in never]: never;
-    };
-  };
-};
+      [_ in never]: never
+    }
+  }
+}
 
 type PublicSchema = Database[Extract<keyof Database, "public">]
 

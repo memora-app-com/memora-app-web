@@ -22,7 +22,7 @@ const updateUserPlan = async (props: { userId: string; planId: number }) => {
   return data[0];
 };
 
-const createEventForUser = async (props: {
+const createGalleryForUser = async (props: {
   title: string;
   description: string;
   code: string;
@@ -32,7 +32,7 @@ const createEventForUser = async (props: {
 }) => {
   const { data: user, error: userError } = await supabase
     .from("users")
-    .select("*, events (*)")
+    .select("*, galleries (*)")
     .eq("id", props.userId)
     .single();
 
@@ -46,14 +46,14 @@ const createEventForUser = async (props: {
 
   let photosLimit = null;
   if (user.plan_id === 1) {
-    if (user.events && user.events.length > 0) {
-      throw new Error("User already has an event");
+    if (user.galleries && user.galleries.length > 0) {
+      throw new Error("User already has a gallery. Please upgrade your plan.");
     }
     photosLimit = 5;
   }
 
-  const { data: event, error: eventError } = await supabase
-    .from("events")
+  const { data: gallery, error: galleryError } = await supabase
+    .from("galleries")
     .insert({
       title: props.title,
       description: props.description,
@@ -65,26 +65,26 @@ const createEventForUser = async (props: {
     })
     .select();
 
-  if (eventError) {
-    if (eventError.code === "23505") {
+  if (galleryError) {
+    if (galleryError.code === "23505") {
       throw new Error(
         `Event with code ${props.code} already exists. 
         Please choose a different code or leave it empty to generate one automatically.`
       );
     }
-    throw new Error(`Event creation failed: ${eventError.message}`);
+    throw new Error(`Event creation failed: ${galleryError.message}`);
   }
 
   if (user.plan_id === 2) {
     await updateUserPlan({ userId: props.userId, planId: 1 });
   }
 
-  return event[0];
+  return gallery[0];
 };
 
 const createPhotos = async (
   props: {
-    eventId: number;
+    galleryId: number;
     userId: string;
     url: string;
   }[]
@@ -93,7 +93,7 @@ const createPhotos = async (
     .from("photos")
     .upsert(
       props.map((photo) => ({
-        event_id: photo.eventId,
+        gallery_id: photo.galleryId,
         user_id: photo.userId,
         url: photo.url,
       })),
@@ -120,4 +120,9 @@ const deletePhotoObjects = async (props: { urls: string[] }) => {
   return data[0];
 };
 
-export { updateUserPlan, createEventForUser, createPhotos, deletePhotoObjects };
+export {
+  updateUserPlan,
+  createGalleryForUser,
+  createPhotos,
+  deletePhotoObjects,
+};

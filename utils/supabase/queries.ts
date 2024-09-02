@@ -14,9 +14,9 @@ const fetchUser = cache(async (userId) => {
   return data[0];
 });
 
-const fetchEvent = cache(async (code) => {
+const fetchGallery = cache(async (code) => {
   const { data, error } = await supabase
-    .from("events")
+    .from("galleries")
     .select()
     .eq("code", code);
 
@@ -25,11 +25,11 @@ const fetchEvent = cache(async (code) => {
   return data[0];
 });
 
-const fetchPhotos = cache(async (eventId) => {
+const fetchPhotos = cache(async (galleryId) => {
   const { data, error } = await supabase
     .from("photos")
     .select()
-    .eq("event_id", eventId);
+    .eq("gallery_id", galleryId);
 
   if (error) throw error;
 
@@ -48,12 +48,18 @@ const fetchPlans = cache(async () => {
   return data;
 });
 
-const fetchRandomEventCode = async () => {
-  const { data, error } = await supabase.rpc("get_random_event_code");
+const fetchRandomGalleryCode = async () => {
+  const { data, error } = await supabase.rpc("get_random_gallery_code");
 
   if (error) throw error;
 
   return data;
 };
 
-export { fetchUser, fetchEvent, fetchPhotos, fetchPlans, fetchRandomEventCode };
+export {
+  fetchUser,
+  fetchGallery,
+  fetchPhotos,
+  fetchPlans,
+  fetchRandomGalleryCode,
+};

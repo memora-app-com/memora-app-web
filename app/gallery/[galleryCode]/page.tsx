@@ -3,7 +3,7 @@
 import React, { useEffect, useRef, useState } from "react";
 
 import useAuthUser from "@/hooks/useUser";
-import { fetchEvent, fetchPhotos } from "@/utils/supabase/queries";
+import { fetchGallery, fetchPhotos } from "@/utils/supabase/queries";
 
 import { LoadingIcon } from "@/components/LoadingIcon";
 import { Button } from "@/components/ui/button";
@@ -24,12 +24,12 @@ import Gallery from "./Gallery";
 import { Clipboard, ClipboardCheck, Share2 } from "lucide-react";
 import { useQRCode } from "next-qrcode";
 
-export default function EventDetails({
+export default function GalleryPage({
   params,
 }: {
-  params: { eventCode: string };
+  params: { galleryCode: string };
 }) {
-  const [event, setEvent] = useState(null);
+  const [gallery, setGallery] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
   const [isSaveLoading, setIsSaveLoading] = useState(false);
   const [photos, setPhotos] = useState([]);
@@ -43,18 +43,17 @@ export default function EventDetails({
   useEffect(() => {
     setIsLoading(true);
     async function fetchData() {
-      if (params.eventCode) {
-        const eventCode = params.eventCode;
-        const retrivedEvent = await fetchEvent(eventCode);
-        setEvent(retrivedEvent);
+      if (params.galleryCode) {
+        const fetchedGallery = await fetchGallery(params.galleryCode);
+        setGallery(fetchedGallery);
 
-        const retrivedPhotos = await fetchPhotos(retrivedEvent.id);
-        setPhotos(retrivedPhotos);
+        const fetchedPhotos = await fetchPhotos(fetchedGallery.id);
+        setPhotos(fetchedPhotos);
       }
       setIsLoading(false);
     }
     fetchData();
-  }, [params.eventCode]);
+  }, [params.galleryCode]);
 
   function handleSubmit(
     e: MouseEvent | React.MouseEvent<HTMLButtonElement>
@@ -63,7 +62,7 @@ export default function EventDetails({
     e.preventDefault();
 
     const photos = uploadedFiles.map((file) => ({
-      eventId: event.id,
+      galleryId: gallery.id,
       userId: authUser.id,
       url: file.url,
     }));
@@ -100,7 +99,7 @@ export default function EventDetails({
   function getInviteLink(): string {
     return `${window.location.origin
       .replace("https://", "")
-      .replace("http://", "")}/join?code=${event.code}`;
+      .replace("http://", "")}/join?code=${gallery.code}`;
   }
 
   function handleCopyInviteLink(
@@ -122,7 +121,7 @@ export default function EventDetails({
         <div className="mb-4">
           <div className="text-center">
             <h1 className="text-3xl font-bold">
-              {event.title !== "" ? event.title : "Joined event"}
+              {gallery.title !== "" ? gallery.title : "Joined gallery"}
             </h1>
           </div>
 
@@ -134,7 +133,7 @@ export default function EventDetails({
               <DialogTrigger asChild>
                 <Button variant="ghost">
                   <p className="text-sm text-muted-foreground ">
-                    # {event.code}{" "}
+                    # {gallery.code}{" "}
                   </p>
                   <Share2 size={20} className="text-muted-foreground ml-2" />
                 </Button>
@@ -144,8 +143,8 @@ export default function EventDetails({
               <DialogHeader>
                 <DialogTitle>Invite your friends</DialogTitle>
                 <DialogDescription>
-                  Share the event code with your friends to invite them to the
-                  event.
+                  Share the gallery code with your friends to invite them to the
+                  gallery.
                 </DialogDescription>
               </DialogHeader>
               <div className="text-center">
@@ -178,7 +177,7 @@ export default function EventDetails({
                     }}
                   />
                 </div>
-                <p className="font-bold mt-4">Join code: #{event.code}</p>
+                <p className="font-bold mt-4">Join code: #{gallery.code}</p>
               </div>
             </DialogContent>
           </Dialog>
@@ -202,7 +201,7 @@ export default function EventDetails({
               </DialogHeader>
 
               <MultipleImageUploader
-                eventId={event.id}
+                galleryId={gallery.id}
                 userId={authUser.id}
                 setUploadedFiles={setUploadedFiles}
               />

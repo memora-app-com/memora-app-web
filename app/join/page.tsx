@@ -12,7 +12,7 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import useAuthUser from "@/hooks/useUser";
-import { JoinEventFormSchema } from "@/lib/form-schemas";
+import { JoinGalleryFormSchema } from "@/lib/form-schemas";
 import { zodResolver } from "@hookform/resolvers/zod";
 import React, { FormEvent, useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
@@ -20,17 +20,17 @@ import { z } from "zod";
 import { loginAnonymously } from "./actions";
 import { ErrorAlert } from "@/components/ui/alert";
 import { useRouter } from "next/navigation";
-import { fetchEvent } from "@/utils/supabase/queries";
+import { fetchGallery } from "@/utils/supabase/queries";
 import { Skeleton } from "@/components/ui/skeleton";
 
-const JoinEvent = ({ searchParams }: { searchParams: { code: string } }) => {
+const JoinGallery = ({ searchParams }: { searchParams: { code: string } }) => {
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const { authUser, authLoading, authError } = useAuthUser();
 
-  const form = useForm<z.infer<typeof JoinEventFormSchema>>({
-    resolver: zodResolver(JoinEventFormSchema),
+  const form = useForm<z.infer<typeof JoinGalleryFormSchema>>({
+    resolver: zodResolver(JoinGalleryFormSchema),
   });
 
   useEffect(() => {
@@ -52,11 +52,11 @@ const JoinEvent = ({ searchParams }: { searchParams: { code: string } }) => {
       console.log("form", form);
       await form.handleSubmit(async (data) => {
         console.log("data.code", data.code);
-        const event = await fetchEvent(data.code);
-        if (event === null || event === undefined) {
-          setError("Event not found");
+        const gallery = await fetchGallery(data.code);
+        if (gallery === null || gallery === undefined) {
+          setError("Gallery not found");
         } else {
-          router.push(`/event/${data.code}`);
+          router.push(`/gallery/${data.code}`);
         }
       })();
     } catch (error) {
@@ -84,7 +84,7 @@ const JoinEvent = ({ searchParams }: { searchParams: { code: string } }) => {
           </>
         ) : (
           <>
-            <h1 className="text-3xl font-bold mb-6">Join Event</h1>
+            <h1 className="text-3xl font-bold mb-6">Join Gallery</h1>
             {error && <ErrorAlert className="mb-4" message={error} />}
             <Form {...form}>
               <form onSubmit={handleSubmit}>
@@ -94,9 +94,9 @@ const JoinEvent = ({ searchParams }: { searchParams: { code: string } }) => {
                   render={({ field }) => (
                     <FormItem>
                       <FormLabel>
-                        Event code
+                        Gallery code
                         <p className="text-xs text-muted-foreground font-normal">
-                          Ask the host for the event code
+                          Ask the host for the gallery code
                         </p>
                       </FormLabel>
                       <div className="relative table w-full">
@@ -119,7 +119,7 @@ const JoinEvent = ({ searchParams }: { searchParams: { code: string } }) => {
                 />
                 <div className="mt-4 flex justify-end">
                   <Button id="join-button" type="submit" disabled={isLoading}>
-                    {isLoading ? "Joining..." : "Join Event"}
+                    {isLoading ? "Joining..." : "Join Gallery"}
                   </Button>
                 </div>
               </form>
@@ -131,4 +131,4 @@ const JoinEvent = ({ searchParams }: { searchParams: { code: string } }) => {
   );
 };
 
-export default JoinEvent;
+export default JoinGallery;

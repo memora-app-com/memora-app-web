@@ -47,7 +47,7 @@ const FileSvgDraw = () => {
 };
 
 const MultipleImageUploader = (props: {
-  eventId: string;
+  galleryId: string;
   userId: string;
   setUploadedFiles: React.Dispatch<React.SetStateAction<UploadedFile[]>>;
 }) => {
@@ -69,7 +69,7 @@ const MultipleImageUploader = (props: {
       data: { session },
     } = await supabase.auth.getSession();
 
-    const fileRelativePath = `${props.eventId}/${props.userId}/${fileName}`;
+    const fileRelativePath = `${props.galleryId}/${props.userId}/${fileName}`;
     const fileAbsoluteUrl = `${supabaseStorageUrl}/object/public/${bucketName}/${parentFolderName}/${fileRelativePath}`;
 
     return new Promise<void>((resolve, reject) => {

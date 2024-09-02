@@ -13,7 +13,7 @@ export const SignUpFormSchema = z.object({
   // confirmPassword: z.string(),
 });
 
-export const CreateEventFormSchema = z
+export const CreateGalleryFormSchema = z
   .object({
     title: z.string().min(1, "Name cannot be empty"),
     code: z.string().optional(),
@@ -27,6 +27,6 @@ export const CreateEventFormSchema = z
     path: ["startDate"],
   });
 
-export const JoinEventFormSchema = z.object({
+export const JoinGalleryFormSchema = z.object({
   code: z.string().min(1, "Code cannot be empty"),
 });
