@@ -8,7 +8,7 @@ import {
   CarouselPrevious,
 } from "@/components/ui/carousel";
 
-const Gallery = ({ photos }) => {
+const Gallery = (props: { photos }) => {
   const [showPreview, setShowPreview] = useState(false);
   const [showPreviewIndex, setShowPreviewIndex] = useState(0);
   const showPreviewRef = useRef(null);
@@ -53,15 +53,9 @@ const Gallery = ({ photos }) => {
   return (
     <div>
       <h2 className="text-xl font-bold mb-4">Gallery</h2>
-      {/* TODO: Work a bit with these styles */}
-      {/* examples: https://flowbite.com/docs/components/gallery/ */}
-      {/* <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4"> */}
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-4 ">
-        {photos.map((photo) => (
-          <div
-            key={photo.id}
-            className="relative w-full h-64 bg-gray-200 rounded-lg overflow-hidden"
-          >
+      <div className="masonry sm:masonry-sm md:masonry-md lg:masonry-lg 2xl:masonry-2xl 3xl:masonry-3xl">
+        {props.photos.map((photo) => (
+          <div key={photo.id} className="pb-2 break-inside">
             <Image
               src={photo.url}
               width={500}
@@ -69,7 +63,7 @@ const Gallery = ({ photos }) => {
               alt="Event photo"
               className="w-full h-full object-cover"
               loading="lazy"
-              onClick={(e) => handleImageClick(e, photos.indexOf(photo))}
+              onClick={(e) => handleImageClick(e, props.photos.indexOf(photo))}
             />
           </div>
         ))}
@@ -88,7 +82,7 @@ const Gallery = ({ photos }) => {
             }}
           >
             <CarouselContent>
-              {photos.map((image, index) => (
+              {props.photos.map((image, index) => (
                 <CarouselItem key={index}>
                   <Image
                     src={image.url}

@@ -12,7 +12,7 @@ export default function Providers({ children }) {
   return (
     <QueryClientProvider client={queryClient}>
       {/* TODO: Switch to defualt theme "system" */}
-      <ThemeProvider attribute="class" defaultTheme="dark" enableSystem>
+      <ThemeProvider attribute="class" defaultTheme="light" enableSystem>
         {children}
       </ThemeProvider>
       <Toaster />

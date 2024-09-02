@@ -115,7 +115,7 @@ export default function EventDetails({
   }
 
   return (
-    <div className="container p-4">
+    <div className=" p-4">
       {authLoading || isLoading ? (
         <LoadingIcon center />
       ) : (
@@ -194,7 +194,7 @@ export default function EventDetails({
             </DialogTrigger>
             <DialogContent className="sm:max-w-[425px]">
               <DialogHeader>
-                <DialogTitle>Upload your photos</DialogTitle>ß
+                <DialogTitle>Upload your photos</DialogTitle>
                 <DialogDescription>
                   Upload photos here. Wait for them to load, then click save
                   when you&rsquo;re done.
