@@ -8,7 +8,7 @@ export async function POST(req: Request) {
   const origin = req.headers.get("origin");
   const user = await fetchUser(userId);
 
-  if (user.plan.billing_type === "one-time") {
+  if (user.plan.billing_type === "one_time") {
     const paymentIntents = await stripe.paymentIntents.list({
       customer: user.stripe_reference,
     });
