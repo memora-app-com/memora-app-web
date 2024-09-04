@@ -14,6 +14,29 @@ const fetchUser = cache(async (userId) => {
   return data[0];
 });
 
+const fetchUserPlan = cache(async (userId) => {
+  const { data, error } = await supabase
+    .from("users")
+    .select("*, plan:plans(*)")
+    .eq("id", userId)
+    .single();
+
+  if (error) throw error;
+
+  return data;
+});
+
+const fetchUserGalleries = cache(async (userId) => {
+  const { data, error } = await supabase
+    .from("galleries")
+    .select()
+    .eq("host_id", userId);
+
+  if (error) throw error;
+
+  return data;
+});
+
 const fetchGallery = cache(async (code) => {
   const { data, error } = await supabase
     .from("galleries")
@@ -58,6 +81,8 @@ const fetchRandomGalleryCode = async () => {
 
 export {
   fetchUser,
+  fetchUserPlan,
+  fetchUserGalleries,
   fetchGallery,
   fetchPhotos,
   fetchPlans,

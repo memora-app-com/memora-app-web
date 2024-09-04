@@ -28,6 +28,7 @@ import { ErrorAlert } from "@/components/ui/alert";
 import { fetchRandomGalleryCode, fetchUser } from "@/utils/supabase/queries";
 import Link from "next/link";
 import { Skeleton } from "@/components/ui/skeleton";
+import Navbar from "@/components/Navbar";
 
 export default function CreateGallery() {
   const router = useRouter(); //TODO: Research: router.push vs window.location.href?
@@ -97,6 +98,7 @@ export default function CreateGallery() {
 
   return (
     <>
+      {authUser && <Navbar />}
       {isLoading && <LoadingIcon center />}
       <div className="container mx-auto p-4 max-w-md">
         <h1 className="text-3xl font-bold mb-6">Create New Gallery</h1>

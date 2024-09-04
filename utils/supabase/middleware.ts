@@ -57,7 +57,7 @@ export async function updateSession(request: NextRequest) {
 
   if (isUserNotAnonymous && isRequestingAuthPage) {
     const url = request.nextUrl.clone();
-    url.pathname = "/plans";
+    url.pathname = "/account";
     return NextResponse.redirect(url);
   }
 

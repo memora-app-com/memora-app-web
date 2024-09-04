@@ -6,7 +6,7 @@ import type { Database, Tables } from "@/database.types";
 // TODO: Check the implications of using supabaseAdmin with SERVICE_ROLE_KEY
 // versus supabase with ANON_KEY and policies set accordingly
 const supabase = createClient();
-const bucketName = "momentz-bucket";
+const bucketName = "main-bucket";
 
 const updateUserPlan = async (props: { userId: string; planId: number }) => {
   const { data, error } = await supabase

@@ -54,9 +54,8 @@ const MultipleImageUploader = (props: {
   const [files, setFiles] = useState<File[] | null>(null);
   const [progress, setProgress] = useState<number[]>([]);
 
-  const supabaseStorageUrl = `https://${process.env.NEXT_PUBLIC_SUPABASE_PROJECT_REFERENCE}.supabase.co/storage/v1`;
-  const resumableUploadEndpoint = `${supabaseStorageUrl}/upload/resumable`;
-  const bucketName = "momentz-bucket";
+  const resumableUploadEndpoint = `${process.env.NEXT_PUBLIC_SUPABASE_STORAGE_URL}/upload/resumable`;
+  const bucketName = "main-bucket";
   const parentFolderName = "photos";
 
   const dropZoneConfig = {
@@ -70,7 +69,7 @@ const MultipleImageUploader = (props: {
     } = await supabase.auth.getSession();
 
     const fileRelativePath = `${props.galleryId}/${props.userId}/${fileName}`;
-    const fileAbsoluteUrl = `${supabaseStorageUrl}/object/public/${bucketName}/${parentFolderName}/${fileRelativePath}`;
+    const fileAbsoluteUrl = `${process.env.NEXT_PUBLIC_SUPABASE_STORAGE_URL}/object/public/${bucketName}/${parentFolderName}/${fileRelativePath}`;
 
     return new Promise<void>((resolve, reject) => {
       const upload = new tus.Upload(file, {

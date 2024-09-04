@@ -23,6 +23,7 @@ import { UploadedFile } from "./UploadedFile";
 import Gallery from "./Gallery";
 import { Clipboard, ClipboardCheck, Share2 } from "lucide-react";
 import { useQRCode } from "next-qrcode";
+import Navbar from "@/components/Navbar";
 
 export default function GalleryPage({
   params,
@@ -45,6 +46,13 @@ export default function GalleryPage({
     async function fetchData() {
       if (params.galleryCode) {
         const fetchedGallery = await fetchGallery(params.galleryCode);
+
+        if (!fetchedGallery) {
+          setIsLoading(false);
+          window.location.href = "/error";
+          return;
+        }
+
         setGallery(fetchedGallery);
 
         const fetchedPhotos = await fetchPhotos(fetchedGallery.id);
@@ -114,113 +122,116 @@ export default function GalleryPage({
   }
 
   return (
-    <div className=" p-4">
-      {authLoading || isLoading ? (
-        <LoadingIcon center />
-      ) : (
-        <div className="mb-4">
-          <div className="text-center">
-            <h1 className="text-3xl font-bold">
-              {gallery.title !== "" ? gallery.title : "Joined gallery"}
-            </h1>
-          </div>
-
-          <Dialog
-            open={isInviteDialogOpen}
-            onOpenChange={handleInviteDialogChange}
-          >
+    <>
+      {authUser && <Navbar />}
+      <div className=" p-4">
+        {authLoading || isLoading ? (
+          <LoadingIcon center />
+        ) : (
+          <div className="mb-4">
             <div className="text-center">
-              <DialogTrigger asChild>
-                <Button variant="ghost">
-                  <p className="text-sm text-muted-foreground ">
-                    # {gallery.code}{" "}
-                  </p>
-                  <Share2 size={20} className="text-muted-foreground ml-2" />
-                </Button>
-              </DialogTrigger>
+              <h1 className="text-3xl font-bold">
+                {gallery.title !== "" ? gallery.title : "Joined gallery"}
+              </h1>
             </div>
-            <DialogContent className="sm:max-w-[425px]">
-              <DialogHeader>
-                <DialogTitle>Invite your friends</DialogTitle>
-                <DialogDescription>
-                  Share the gallery code with your friends to invite them to the
-                  gallery.
-                </DialogDescription>
-              </DialogHeader>
+
+            <Dialog
+              open={isInviteDialogOpen}
+              onOpenChange={handleInviteDialogChange}
+            >
               <div className="text-center">
-                <Button
-                  variant="ghost"
-                  className="mb-4"
-                  onClick={handleCopyInviteLink}
-                >
-                  <p className="text-sm">{getInviteLink()}</p>
-                  {isLinkCopied ? (
-                    <ClipboardCheck
-                      size={20}
-                      className="text-muted-foreground ml-2"
-                    />
-                  ) : (
-                    <Clipboard
-                      size={20}
-                      className="text-muted-foreground ml-2"
-                    />
-                  )}
-                </Button>
-                <div className="flex items-center justify-center">
-                  <Canvas
-                    text={getInviteLink()}
-                    options={{
-                      errorCorrectionLevel: "M",
-                      margin: 3,
-                      scale: 4,
-                      width: 200,
-                    }}
-                  />
-                </div>
-                <p className="font-bold mt-4">Join code: #{gallery.code}</p>
+                <DialogTrigger asChild>
+                  <Button variant="ghost">
+                    <p className="text-sm text-muted-foreground ">
+                      # {gallery.code}{" "}
+                    </p>
+                    <Share2 size={20} className="text-muted-foreground ml-2" />
+                  </Button>
+                </DialogTrigger>
               </div>
-            </DialogContent>
-          </Dialog>
+              <DialogContent className="sm:max-w-[425px]">
+                <DialogHeader>
+                  <DialogTitle>Invite your friends</DialogTitle>
+                  <DialogDescription>
+                    Share the gallery code with your friends to invite them to
+                    the gallery.
+                  </DialogDescription>
+                </DialogHeader>
+                <div className="text-center">
+                  <Button
+                    variant="ghost"
+                    className="mb-4"
+                    onClick={handleCopyInviteLink}
+                  >
+                    <p className="text-sm">{getInviteLink()}</p>
+                    {isLinkCopied ? (
+                      <ClipboardCheck
+                        size={20}
+                        className="text-muted-foreground ml-2"
+                      />
+                    ) : (
+                      <Clipboard
+                        size={20}
+                        className="text-muted-foreground ml-2"
+                      />
+                    )}
+                  </Button>
+                  <div className="flex items-center justify-center">
+                    <Canvas
+                      text={getInviteLink()}
+                      options={{
+                        errorCorrectionLevel: "M",
+                        margin: 3,
+                        scale: 4,
+                        width: 200,
+                      }}
+                    />
+                  </div>
+                  <p className="font-bold mt-4">Join code: #{gallery.code}</p>
+                </div>
+              </DialogContent>
+            </Dialog>
 
-          <Dialog
-            open={isUploadDialogOpen}
-            onOpenChange={handleUploadDialogChange}
-          >
-            <div className="text-center">
-              <DialogTrigger asChild>
-                <Button className="mt-2">Upload photos</Button>
-              </DialogTrigger>
-            </div>
-            <DialogContent className="sm:max-w-[425px]">
-              <DialogHeader>
-                <DialogTitle>Upload your photos</DialogTitle>
-                <DialogDescription>
-                  Upload photos here. Wait for them to load, then click save
-                  when you&rsquo;re done.
-                </DialogDescription>
-              </DialogHeader>
+            <Dialog
+              open={isUploadDialogOpen}
+              onOpenChange={handleUploadDialogChange}
+            >
+              <div className="text-center">
+                <DialogTrigger asChild>
+                  <Button className="mt-2">Upload photos</Button>
+                </DialogTrigger>
+              </div>
+              <DialogContent className="sm:max-w-[425px]">
+                <DialogHeader>
+                  <DialogTitle>Upload your photos</DialogTitle>
+                  <DialogDescription>
+                    Upload photos here. Wait for them to load, then click save
+                    when you&rsquo;re done.
+                  </DialogDescription>
+                </DialogHeader>
 
-              <MultipleImageUploader
-                galleryId={gallery.id}
-                userId={authUser.id}
-                setUploadedFiles={setUploadedFiles}
-              />
+                <MultipleImageUploader
+                  galleryId={gallery.id}
+                  userId={authUser.id}
+                  setUploadedFiles={setUploadedFiles}
+                />
 
-              <DialogFooter>
-                <Button
-                  onClick={handleSubmit}
-                  type="submit"
-                  disabled={uploadedFiles.length === 0}
-                >
-                  {isSaveLoading ? <LoadingIcon /> : "Save"}
-                </Button>
-              </DialogFooter>
-            </DialogContent>
-          </Dialog>
+                <DialogFooter>
+                  <Button
+                    onClick={handleSubmit}
+                    type="submit"
+                    disabled={uploadedFiles.length === 0}
+                  >
+                    {isSaveLoading ? <LoadingIcon /> : "Save"}
+                  </Button>
+                </DialogFooter>
+              </DialogContent>
+            </Dialog>
 
-          <Gallery photos={photos} />
-        </div>
-      )}
-    </div>
+            <Gallery photos={photos} />
+          </div>
+        )}
+      </div>
+    </>
   );
 }

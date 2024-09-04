@@ -5,12 +5,13 @@ import Providers from "./providers";
 import { Inter } from "next/font/google";
 import "./globals.css";
 import { cn } from "@/utils/tailwind";
+import Navbar from "@/components/Navbar";
 
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: "Memora",
-  description: "Metadata description (REPLACE-THIS)",
+  title: "Memora App",
+  description: "Capture. Share. Re-live. Create lasting memories.",
 };
 
 export default function RootLayout({

@@ -37,7 +37,7 @@ const AfterCheckout = ({ params }: { params: { sessionId: string } }) => {
     if (params?.sessionId) {
       handleCheckoutSession();
     } else {
-      router.push("/plans");
+      router.push("/account");
     }
   }, [authLoading]);
 

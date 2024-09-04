@@ -71,9 +71,11 @@ function PlansPage({ searchParams }: { searchParams: { canceled: true } }) {
       ) : (
         <>
           <div className="">
-            <form className="flex flex-wrap justify-end m-4" action={signOut}>
-              <Button variant="ghost-destructive">Log out</Button>
-            </form>
+            <div className="flex flex-wrap justify-end m-4">
+              <Button variant="ghost">
+                <Link href="/account">Account</Link>
+              </Button>
+            </div>
             {plans.map((plan: any) => (
               <Card key={plan.id} className="m-4 max-w-80">
                 <CardHeader>

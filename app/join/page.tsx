@@ -22,6 +22,7 @@ import { ErrorAlert } from "@/components/ui/alert";
 import { useRouter } from "next/navigation";
 import { fetchGallery } from "@/utils/supabase/queries";
 import { Skeleton } from "@/components/ui/skeleton";
+import Navbar from "@/components/Navbar";
 
 const JoinGallery = ({ searchParams }: { searchParams: { code: string } }) => {
   const router = useRouter();
@@ -70,6 +71,7 @@ const JoinGallery = ({ searchParams }: { searchParams: { code: string } }) => {
 
   return (
     <>
+      {authUser && <Navbar />}
       {isLoading && <LoadingIcon center />}
       <div className="container mx-auto p-4 max-w-lg">
         {authLoading ? (

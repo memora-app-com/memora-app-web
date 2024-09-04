@@ -62,7 +62,7 @@ export default function LoginPage({
 
       const res = await login(props);
       if (res.status === 200) {
-        window.location.href = "/plans";
+        window.location.href = "/account";
       } else if (res.status === 400) {
         setError(res.error);
         setTimeout(() => {
