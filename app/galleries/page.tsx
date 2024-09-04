@@ -71,7 +71,7 @@ const Galleries = () => {
           </>
         ) : (
           <div>
-            <p>It seems like you don't have any galleries yet</p>
+            <p>It seems like you don&apos;t have any galleries yet</p>
             <Button className="mt-4">
               <Link href="/create-gallery">Create a gallery</Link>
             </Button>
