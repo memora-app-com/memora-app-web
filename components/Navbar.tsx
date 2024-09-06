@@ -21,7 +21,7 @@ const Navbar = () => {
 
   return (
     <>
-      <div className="hidden relative py-6 sm:flex flex-col justify-center shadow-md h-16 z-10 top-0 left-0 right-0 px-4 sm:px-0">
+      <div className=" hidden relative py-6 sm:flex flex-col justify-center shadow-md h-16 z-10 top-0 left-0 right-0 px-4 sm:px-0">
         {/* <LogoLink /> */}
         <DesktopNavbar />
       </div>
@@ -71,7 +71,7 @@ function DesktopNavbar() {
 function MobileDrawer({ isOpen, onClose }) {
   return (
     <div
-      className={`fixed flex flex-col justify-center items-center z-10 top-0 right-0 h-full w-full bg-white text-black transition-transform duration-300 transform ${
+      className={`fixed flex flex-col justify-center items-center z-10 top-0 right-0 h-full w-full bg-muted text-black transition-transform duration-300 transform ${
         isOpen ? "translate-x-0" : "translate-x-full"
       }`}
     >
