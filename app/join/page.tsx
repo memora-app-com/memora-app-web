@@ -52,14 +52,14 @@ const JoinGallery = ({ searchParams }: { searchParams: { code: string } }) => {
         console.log("logging in anonymously");
         try {
           await loginAnonymously();
-        }
-        catch (error) {
-          console.log(error)
+        } catch (error) {
+          console.log(error);
           setError(error.message);
           setTimeout(() => {
             setError(null);
           }, 4000);
           setIsLoading(false);
+        }
       }
 
       console.log("form", form);
