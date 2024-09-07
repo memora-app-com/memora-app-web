@@ -37,15 +37,10 @@ const JoinGallery = ({ searchParams }: { searchParams: { code: string } }) => {
   });
 
   useEffect(() => {
-    if (!authLoading && searchParams.code) {
+    if (searchParams.code) {
       form.setValue("code", searchParams.code);
       document.getElementById("join-button").click();
-    } else if (authError) {
-      setError(authError.message);
-      setTimeout(() => {
-        setError(null);
-      }, 4000);
-    }
+    } 
   }, [authLoading]);
 
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
