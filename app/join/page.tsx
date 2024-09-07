@@ -40,6 +40,11 @@ const JoinGallery = ({ searchParams }: { searchParams: { code: string } }) => {
     if (!authLoading && searchParams.code) {
       form.setValue("code", searchParams.code);
       document.getElementById("join-button").click();
+    } else if (authError) {
+      setError(authError.message);
+      setTimeout(() => {
+        setError(null);
+      }, 4000);
     }
   }, [authLoading]);
 
@@ -53,7 +58,6 @@ const JoinGallery = ({ searchParams }: { searchParams: { code: string } }) => {
         try {
           await loginAnonymously();
         } catch (error) {
-          console.log(error);
           setError(error.message);
           setTimeout(() => {
             setError(null);
@@ -62,10 +66,9 @@ const JoinGallery = ({ searchParams }: { searchParams: { code: string } }) => {
         }
       }
 
-      console.log("form", form);
       await form.handleSubmit(async (data) => {
-        console.log("data.code", data.code);
         const gallery = await fetchGallery(data.code);
+
         if (gallery === null || gallery === undefined) {
           setError("Gallery not found");
         } else {
