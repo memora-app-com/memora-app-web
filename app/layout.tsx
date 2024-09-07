@@ -5,7 +5,7 @@ import Providers from "./providers";
 import { Inter } from "next/font/google";
 import "./globals.css";
 import { cn } from "@/utils/tailwind";
-import localFont from "@next/font/local";
+import localFont from "next/font/local";
 
 const inter = Inter({ subsets: ["latin"] });
 
