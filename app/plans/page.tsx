@@ -15,6 +15,8 @@ import useAuthUser from "@/hooks/useUser";
 import Link from "next/link";
 import { Skeleton } from "@/components/ui/skeleton";
 import { signOut } from "@/utils/supabase/auth-helpers";
+import Navbar from "@/components/Navbar";
+import H1 from "@/components/H1";
 
 function PlansPage({ searchParams }: { searchParams: { canceled: true } }) {
   const [isLoading, setIsLoading] = useState(true);
@@ -59,7 +61,8 @@ function PlansPage({ searchParams }: { searchParams: { canceled: true } }) {
   };
 
   return (
-    <div className="flex flex-wrap justify-center">
+    <>
+      {authUser && <Navbar />}
       {isLoading ? (
         <div className="flex-col justify-center">
           <div className="flex justify-center mt-4">
@@ -69,29 +72,25 @@ function PlansPage({ searchParams }: { searchParams: { canceled: true } }) {
           <Skeleton className="mt-4 w-80 h-60" />
         </div>
       ) : (
-        <>
-          <div className="">
-            <div className="flex flex-wrap justify-end m-4">
-              <Button variant="ghost">
-                <Link href="/account">Account</Link>
-              </Button>
-            </div>
+        <div className="container">
+          <H1 className="mt-10">What&apos;s best for you?</H1>
+          <div className="flex-1 justify-center mt-10 flex flex-col items-center lg:flex-row">
             {plans.map((plan: any) => (
               <Card key={plan.id} className="m-4 max-w-80">
                 <CardHeader>
-                  <CardTitle>{plan.name}</CardTitle>
+                  <CardTitle>
+                    <h1 className="text-2xl font-bold">{plan.name}</h1>
+                  </CardTitle>
                 </CardHeader>
                 <CardContent>
-                  <p>{plan.description}</p>
+                  <p className="min-h-28">{plan.description}</p>
                   <p className="font-bold mt-4 text-center text-xl">
                     {plan.price}${" "}
-                    <span className="font-normal">
-                      {plan.billing_type === "monthly" ? (
-                        <>/ month</>
-                      ) : (
-                        plan.billing_type === "one_time" && <> one time</>
-                      )}
-                    </span>
+                    {plan.billing_type === "monthly" ? (
+                      <>/ month</>
+                    ) : (
+                      plan.billing_type === "one_time" && <> one time</>
+                    )}
                   </p>
                 </CardContent>
                 <CardFooter className="flex-col justify-center">
@@ -115,15 +114,15 @@ function PlansPage({ searchParams }: { searchParams: { canceled: true } }) {
                 </CardFooter>
               </Card>
             ))}
-            {user.plan_id === 1 && (
-              <div className="text-center font-light text-sm text-accent-foreground underline">
-                <Link href="/create-gallery">Continue free trial</Link>
-              </div>
-            )}
           </div>
-        </>
+          {user.plan_id === 1 && (
+            <div className="text-center font-light text-sm text-accent-foreground underline mt-10">
+              <Link href="/create-gallery">or continue with free trial</Link>
+            </div>
+          )}
+        </div>
       )}
-    </div>
+    </>
   );
 }
 

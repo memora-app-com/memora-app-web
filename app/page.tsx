@@ -1,4 +1,5 @@
-import Image from "next/image";
+import SeparatorWithText from "@/components/SeparatorWithText";
+import { Button } from "@/components/ui/button";
 import Link from "next/link";
 
 export default function Home() {
@@ -16,8 +17,16 @@ export default function Home() {
         </p>
       </div>
 
-      <h1 className="text-3xl">Memora App</h1>
-      <h2>Coming soon...</h2>
+      <div className="flex flex-col space-y-10">
+        <Button variant="outline">
+          <Link href="/login">Create account</Link>
+        </Button>
+        <SeparatorWithText text="OR" />
+        <Button variant="default">
+          <Link href="/join">Join a gallery</Link>
+        </Button>
+      </div>
+      <h2>More coming soon...</h2>
     </main>
   );
 }

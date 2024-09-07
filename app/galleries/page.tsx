@@ -41,26 +41,24 @@ const Galleries = () => {
           <>
             <div>
               <p>{user.name}, here are your galleries</p>
-              <Button variant="outline" className="mt-4">
-                <Link href="/account">Go to your account</Link>
+              <Button variant="secondary" className="mt-4">
+                <Link href="/create-gallery">Create New Gallery</Link>
               </Button>
             </div>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mt-4">
               {userGalleries.map((gallery) => (
-                <Card
-                  key={gallery.id}
-                  className="bg-white rounded-lg shadow-md"
-                >
+                <Card key={gallery.id} className="">
                   <div className="p-4">
                     <h2 className="text-xl font-bold">{gallery.title}</h2>
                     <p className="text-muted-foreground"># {gallery.code}</p>
                     <p>{gallery.description}</p>
                   </div>
-                  <div className="p-4 bg-gray-100 flex">
-                    <Link href={`/gallery/${gallery.code}`}>
-                      <Button>View gallery</Button>
-                    </Link>
-
+                  <div className="p-4 bg-muted flex">
+                    <Button>
+                      <Link href={`/gallery/${gallery.code}`}>
+                        View gallery
+                      </Link>
+                    </Button>
                     <Button variant="ghost-destructive" className="">
                       <Trash size={16} />
                     </Button>

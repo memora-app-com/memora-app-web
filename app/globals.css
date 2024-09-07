@@ -12,7 +12,7 @@
     --popover-foreground: 20 14.3% 4.1%;
     --primary: 54 100% 50%;
     --primary-foreground: 26 83.3% 14.1%;
-    --secondary: 60 4.8% 95.9%;
+    --secondary: 137, 100%, 37%;
     --secondary-foreground: 24 9.8% 10%;
     --muted: 40, 61%, 90%;
     --muted-foreground: 25 5.3% 44.7%;
@@ -81,4 +81,12 @@
       }
 
   }
+}
+
+.text-budge {
+  font-family: var(--font-budge);
+}
+
+.shadow-solid-primary {
+  box-shadow: 10px 10px 0px #000000;
 }
