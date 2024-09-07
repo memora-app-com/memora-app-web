@@ -47,13 +47,19 @@ const JoinGallery = ({ searchParams }: { searchParams: { code: string } }) => {
     e.preventDefault();
     setIsLoading(true);
 
-    console.log("submitting form");
-
     try {
-      console.log("authLoading", authLoading);
-      console.log("authUser", authUser);
       if (!authLoading && !authUser) {
-        await loginAnonymously();
+        console.log("logging in anonymously");
+        try {
+          await loginAnonymously();
+        }
+        catch (error) {
+          console.log(error)
+          setError(error.message);
+          setTimeout(() => {
+            setError(null);
+          }, 4000);
+          setIsLoading(false);
       }
 
       console.log("form", form);
