@@ -37,7 +37,10 @@ const JoinGallery = ({ searchParams }: { searchParams: { code: string } }) => {
   });
 
   useEffect(() => {
+    console.log("here");
+    console.log(searchParams.code);
     if (searchParams.code) {
+      console.log("inside if");
       form.setValue("code", searchParams.code);
       document.getElementById("join-button").click();
     } 
