@@ -54,6 +54,7 @@ const MultipleImageUploader = (props: {
   const [files, setFiles] = useState<File[] | null>(null);
   const [progress, setProgress] = useState<number[]>([]);
 
+  //test commit
   const resumableUploadEndpoint = `${process.env.NEXT_PUBLIC_SUPABASE_STORAGE_URL}/upload/resumable`;
   const bucketName = "main-bucket";
   const parentFolderName = "photos";
