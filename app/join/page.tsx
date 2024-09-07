@@ -25,25 +25,25 @@ import { Skeleton } from "@/components/ui/skeleton";
 import Navbar from "@/components/Navbar";
 import SmileyFace from "@/components/SmileyFace";
 import H1 from "@/components/H1";
+import { useSearchParams } from "next/navigation";
 
-const JoinGallery = ({ searchParams }: { searchParams: { code: string } }) => {
+const JoinGallery = () => {
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const { authUser, authLoading, authError } = useAuthUser();
+  const searchParams = useSearchParams();
+  const code = searchParams.get("code");
 
   const form = useForm<z.infer<typeof JoinGalleryFormSchema>>({
     resolver: zodResolver(JoinGalleryFormSchema),
   });
 
   useEffect(() => {
-    console.log("here");
-    console.log(searchParams.code);
-    if (searchParams.code) {
-      console.log("inside if");
-      form.setValue("code", searchParams.code);
+    if (code) {
+      form.setValue("code", code);
       document.getElementById("join-button").click();
-    } 
+    }
   }, [authLoading]);
 
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {

@@ -41,7 +41,7 @@ const Account = () => {
   return (
     <div className="relative overflow-hidden h-full">
       <div className="absolute inset-0 small-height:hidden">
-        <div className="absolute bottom-[-100px] right-[10px] w-[100vw] h-[100vw] border-2 border-black bg-primary rounded-full translate-x-1/2 translate-y-1/2 shadow-lg"></div>
+        {/* <div className="absolute bottom-[-100px] right-[10px] w-[100vw] h-[100vw] border-2 border-black bg-primary rounded-full translate-x-1/2 translate-y-1/2 shadow-lg"></div> */}
       </div>
       {authUser && <Navbar />}
       {user && (
@@ -71,7 +71,7 @@ const Account = () => {
                 <Link href="/galleries">Your Galleries</Link>
               </Button>
               <form className="" action={signOut}>
-                <Button variant="ghost-destructive">
+                <Button variant="ghost-destructive" className="relative z-10">
                   <LogOut size={16} className="mr-2" />
                   Log out
                 </Button>
