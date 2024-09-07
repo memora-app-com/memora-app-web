@@ -71,7 +71,7 @@ const Gallery = (props: { photos }) => {
       {showPreview && (
         <div
           className={`fixed top-0 left-0 w-full h-full flex items-center justify-center 
-        bg-background/80 text-white text-2xl 
+        bg-foreground/80 backdrop-blur-sm text-white text-2xl 
         font-bold cursor-pointer transition-all duration-300`}
         >
           <Carousel

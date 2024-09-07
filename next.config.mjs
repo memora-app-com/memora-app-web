@@ -8,7 +8,9 @@ const nextConfig = {
         port: "",
       },
       {
-        hostname: "flowbite.s3.amazonaws.com", // TODO: Delete this after demo
+        protocol: "http",
+        hostname: "127.0.0.1",
+        port: "54321",
       },
     ],
   },

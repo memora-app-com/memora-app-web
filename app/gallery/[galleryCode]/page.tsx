@@ -24,6 +24,7 @@ import Gallery from "./Gallery";
 import { Clipboard, ClipboardCheck, Share2 } from "lucide-react";
 import { useQRCode } from "next-qrcode";
 import Navbar from "@/components/Navbar";
+import { useRouter } from "next/navigation";
 
 export default function GalleryPage({
   params,
@@ -39,6 +40,7 @@ export default function GalleryPage({
   const [isUploadDialogOpen, setIsUploadDialogOpen] = useState(false);
   const [isInviteDialogOpen, setIsInviteDialogOpen] = useState(false);
   const [isLinkCopied, setIsLinkCopied] = useState(false);
+  const router = useRouter();
   const { Canvas } = useQRCode();
 
   useEffect(() => {
@@ -63,21 +65,25 @@ export default function GalleryPage({
     fetchData();
   }, [params.galleryCode]);
 
-  function handleSubmit(
+  async function handleSubmit(
     e: MouseEvent | React.MouseEvent<HTMLButtonElement>
-  ): void {
+  ): Promise<void> {
     setIsSaveLoading(true);
     e.preventDefault();
 
-    const photos = uploadedFiles.map((file) => ({
+    const photosToCreate = uploadedFiles.map((file) => ({
       galleryId: gallery.id,
       userId: authUser.id,
       url: file.url,
     }));
 
-    createPhotos(photos);
+    await createPhotos(photosToCreate);
     setIsUploadDialogOpen(false);
     setIsSaveLoading(false);
+
+    setPhotos([...photos, ...photosToCreate]);
+    //this doesn't work
+    // router.refresh();
   }
 
   function handleUploadDialogChange(open: boolean): void {

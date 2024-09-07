@@ -54,13 +54,15 @@ const MultipleImageUploader = (props: {
   const [files, setFiles] = useState<File[] | null>(null);
   const [progress, setProgress] = useState<number[]>([]);
 
-  //test commit
   const resumableUploadEndpoint = `${process.env.NEXT_PUBLIC_SUPABASE_STORAGE_URL}/upload/resumable`;
   const bucketName = "main-bucket";
   const parentFolderName = "photos";
 
   const dropZoneConfig = {
-    maxFiles: 5,
+    accept: {
+      "image/*": [".jpg", ".jpeg", ".png", ".gif"],
+    },
+    maxFiles: 10,
     maxSize: 1024 * 1024 * 4,
     multiple: true,
   };
@@ -175,11 +177,11 @@ const MultipleImageUploader = (props: {
   return (
     <FileUploader
       value={files}
-      onValueChange={handleValueChange} // Use the new handleValueChange function
+      onValueChange={handleValueChange}
       dropzoneOptions={dropZoneConfig}
       className="relative bg-background rounded-lg p-2"
     >
-      <FileInput className="outline-dashed outline-1 outline-white">
+      <FileInput className="outline-dashed outline-1 outline-foreground">
         <div className="flex items-center justify-center flex-col pt-3 pb-4 w-full">
           <FileSvgDraw />
         </div>
