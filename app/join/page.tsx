@@ -42,12 +42,16 @@ const JoinGallery = () => {
   useEffect(() => {
     if (code) {
       form.setValue("code", code);
-      document.getElementById("join-button").click();
+      joinGallery();
     }
   }, [authLoading]);
 
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    joinGallery();
+  };
+
+  const joinGallery = async () => {
     setIsLoading(true);
 
     try {
@@ -79,6 +83,7 @@ const JoinGallery = () => {
         setError(null);
       }, 4000);
     }
+
     setIsLoading(false);
   };
 
@@ -127,7 +132,7 @@ const JoinGallery = () => {
                               className="rounded-r-md border-l-0"
                               type="text"
                               placeholder="enter-code"
-                              defaultValue={searchParams.code}
+                              defaultValue={code}
                               {...field}
                             />
                           </FormControl>
