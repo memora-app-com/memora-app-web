@@ -39,10 +39,7 @@ const Account = () => {
   }, [authLoading]);
 
   return (
-    <div className="relative overflow-hidden h-full">
-      <div className="absolute inset-0 small-height:hidden">
-        {/* <div className="absolute bottom-[-100px] right-[10px] w-[100vw] h-[100vw] border-2 border-black bg-primary rounded-full translate-x-1/2 translate-y-1/2 shadow-lg"></div> */}
-      </div>
+    <>
       {authUser && <Navbar />}
       {user && (
         <div className="sm:container mt-16 pl-16">
@@ -80,7 +77,7 @@ const Account = () => {
           </div>
         </div>
       )}
-    </div>
+    </>
   );
 };
 

@@ -63,7 +63,7 @@ const MultipleImageUploader = (props: {
       "image/*": [".jpg", ".jpeg", ".png", ".gif"],
     },
     maxFiles: 10,
-    maxSize: 1024 * 1024 * 4,
+    maxSize: 1024 * 1024 * 50,
     multiple: true,
   };
   const uploadFile = async (fileName: string, file: File, index: number) => {

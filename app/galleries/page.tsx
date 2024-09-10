@@ -54,12 +54,11 @@ const Galleries = () => {
                     <p>{gallery.description}</p>
                   </div>
                   <div className="p-4 bg-muted flex">
-                    <Button>
-                      <Link href={`/gallery/${gallery.code}`}>
-                        View gallery
-                      </Link>
-                    </Button>
-                    <Button variant="ghost-destructive" className="">
+                    <Link href={`/gallery/${gallery.code}`}>
+                      {" "}
+                      <Button>View gallery</Button>
+                    </Link>
+                    <Button disabled variant="ghost-destructive" className="">
                       <Trash size={16} />
                     </Button>
                   </div>

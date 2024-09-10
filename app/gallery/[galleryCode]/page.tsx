@@ -25,6 +25,7 @@ import { Clipboard, ClipboardCheck, Share2 } from "lucide-react";
 import { useQRCode } from "next-qrcode";
 import Navbar from "@/components/Navbar";
 import { useRouter } from "next/navigation";
+import H1 from "@/components/H1";
 
 export default function GalleryPage({
   params,
@@ -136,9 +137,9 @@ export default function GalleryPage({
         ) : (
           <div className="mb-4">
             <div className="text-center">
-              <h1 className="text-3xl font-bold">
+              <H1 className="mb-0">
                 {gallery.title !== "" ? gallery.title : "Joined gallery"}
-              </h1>
+              </H1>
             </div>
 
             <Dialog
@@ -157,19 +158,41 @@ export default function GalleryPage({
               </div>
               <DialogContent className="sm:max-w-[425px]">
                 <DialogHeader>
-                  <DialogTitle>Invite your friends</DialogTitle>
+                  <DialogTitle>
+                    <H1 className="mb-0">Invite your friends</H1>
+                  </DialogTitle>
                   <DialogDescription>
                     Share the gallery code with your friends to invite them to
                     the gallery.
                   </DialogDescription>
                 </DialogHeader>
                 <div className="text-center">
+                  <p className=" mb-4 overflow-hidden">
+                    Join code:
+                    <strong>
+                      <br /> {gallery.code}
+                    </strong>
+                  </p>
+
+                  <div className="flex items-center justify-center">
+                    <Canvas
+                      text={getInviteLink()}
+                      options={{
+                        errorCorrectionLevel: "M",
+                        margin: 3,
+                        scale: 4,
+                        width: 200,
+                        color: { dark: "#000000", light: "#fefaf1" },
+                      }}
+                    />
+                  </div>
+
                   <Button
-                    variant="ghost"
-                    className="mb-4"
+                    variant="outline"
+                    className="mt-4"
                     onClick={handleCopyInviteLink}
                   >
-                    <p className="text-sm">{getInviteLink()}</p>
+                    <p className="text-sm ">Copy Link</p>
                     {isLinkCopied ? (
                       <ClipboardCheck
                         size={20}
@@ -182,18 +205,6 @@ export default function GalleryPage({
                       />
                     )}
                   </Button>
-                  <div className="flex items-center justify-center">
-                    <Canvas
-                      text={getInviteLink()}
-                      options={{
-                        errorCorrectionLevel: "M",
-                        margin: 3,
-                        scale: 4,
-                        width: 200,
-                      }}
-                    />
-                  </div>
-                  <p className="font-bold mt-4">Join code: #{gallery.code}</p>
                 </div>
               </DialogContent>
             </Dialog>

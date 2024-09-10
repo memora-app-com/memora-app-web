@@ -65,12 +65,12 @@ export default function LoginPage({
         window.location.href = "/account";
       } else if (res.status === 400) {
         setError(res.error);
+        setIsLoading(false);
         setTimeout(() => {
           setError(null);
         }, 3000);
       }
 
-      setIsLoading(false);
     })();
   }
 
