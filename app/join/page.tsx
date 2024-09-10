@@ -40,11 +40,14 @@ const JoinGallery = () => {
   });
 
   useEffect(() => {
+    async function asyncJoinGallery() {
+      await joinGallery();
+    }
     if (code) {
       form.setValue("code", code);
-      joinGallery();
+      asyncJoinGallery();
     }
-  }, [authLoading]);
+  }, [authLoading, code, form]);
 
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -89,7 +92,8 @@ const JoinGallery = () => {
 
   return (
     <div className="relative overflow-hidden h-full">
-      {authUser && <Navbar />}
+      {authUser && !authUser.is_anonymous && <Navbar />}
+
       {isLoading && <LoadingIcon center />}
       <div className=" justify-center items-center small-height:items-start h-screen grid grid-cols-4 grid-flow-row">
         <div className="hidden md:flex h-full w-full justify-center items-end pb-40">

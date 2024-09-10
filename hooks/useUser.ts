@@ -1,13 +1,14 @@
 import { useState, useEffect } from "react";
 import { createClient } from "@/utils/supabase/client";
+import { User } from "@supabase/supabase-js";
 // import { useQuery } from "@tanstack/react-query";
 // import { fetchUserProfile } from "@/utils/supabase/queries";
 
 const supabase = createClient();
 
 const useAuthUser = () => {
-  const [authUser, setAuthUser] = useState(null);
-  const [authLoading, setAuthLoading] = useState(true);
+  const [authUser, setAuthUser] = useState<User>(null);
+  const [authLoading, setAuthLoading] = useState<boolean>(true);
   const [authError, setAuthError] = useState(null);
 
   useEffect(() => {

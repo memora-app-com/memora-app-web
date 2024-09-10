@@ -62,7 +62,8 @@ function PlansPage({ searchParams }: { searchParams: { canceled: true } }) {
 
   return (
     <>
-      {authUser && <Navbar />}
+      {authUser && !authUser.is_anonymous && <Navbar />}
+
       {isLoading ? (
         <div className="flex-col justify-center">
           <div className="flex justify-center mt-4">

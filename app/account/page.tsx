@@ -40,7 +40,8 @@ const Account = () => {
 
   return (
     <>
-      {authUser && <Navbar />}
+      {authUser && !authUser.is_anonymous && <Navbar />}
+
       {user && (
         <div className="sm:container mt-16 pl-16">
           <h1 className="text-3xl font-bold">Welcome back,</h1>

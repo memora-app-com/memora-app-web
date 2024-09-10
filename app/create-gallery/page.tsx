@@ -100,7 +100,8 @@ export default function CreateGallery() {
 
   return (
     <div className="relative overflow-hidden h-full">
-      {authUser && <Navbar />}
+      {authUser && !authUser.is_anonymous && <Navbar />}
+
       {isLoading && <LoadingIcon center />}
       <div className="p-4 w-full md:grid  md:grid-cols-2 flex justify-center">
         <div className=" md:pl-16 max-w-md lg:max-w-xl">

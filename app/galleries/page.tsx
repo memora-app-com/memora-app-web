@@ -14,30 +14,42 @@ const Galleries = () => {
   const { authUser, authLoading, authError } = useAuthUser();
   const [user, setUser] = useState(null);
   const [userGalleries, setUserGalleries] = useState([]);
+  const [loading, setLoading] = useState(true);
   const router = useRouter();
 
   useEffect(() => {
     if (authUser) {
+    }
+
+    async function fetchData() {
       fetchUser(authUser.id).then((data) => {
         if (data) {
           setUser(data);
         } else {
           router.push("/login");
         }
-      });
 
-      fetchUserGalleries(authUser.id).then((data) => {
-        setUserGalleries(data);
+        //can be improved by using a single query or parallel queries (Promise.all)
+        fetchUserGalleries(authUser.id).then((data) => {
+          setUserGalleries(data);
+        });
+
+        setLoading(false);
       });
+    }
+
+    if (!authLoading && authUser) {
+      fetchData();
     }
   }, [authLoading]);
 
   return (
     <>
-      {authUser && <Navbar />}
+      {authUser && !authUser.is_anonymous && <Navbar />}
+
       <div className="container mt-4">
         {user && <h1 className="text-3xl font-bold mb-6">Your galleries</h1>}
-        {userGalleries.length > 0 ? (
+        {userGalleries.length > 0 && user ? (
           <>
             <div>
               <p>{user.name}, here are your galleries</p>

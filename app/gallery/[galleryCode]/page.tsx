@@ -33,7 +33,7 @@ export default function GalleryPage({
   params: { galleryCode: string };
 }) {
   const [gallery, setGallery] = useState(null);
-  const [isLoading, setIsLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
   const [isSaveLoading, setIsSaveLoading] = useState(false);
   const [photos, setPhotos] = useState([]);
   const { authUser, authLoading, authError } = useAuthUser();
@@ -45,9 +45,12 @@ export default function GalleryPage({
   const { Canvas } = useQRCode();
 
   useEffect(() => {
-    setIsLoading(true);
     async function fetchData() {
       if (params.galleryCode) {
+        if (!authUser) {
+          router.push("/join?code=" + params.galleryCode);
+          return;
+        }
         const fetchedGallery = await fetchGallery(params.galleryCode);
 
         if (!fetchedGallery) {
@@ -61,10 +64,15 @@ export default function GalleryPage({
         const fetchedPhotos = await fetchPhotos(fetchedGallery.id);
         setPhotos(fetchedPhotos);
       }
+
       setIsLoading(false);
     }
-    fetchData();
-  }, [params.galleryCode]);
+
+    if (!authLoading) {
+      console.log("finished loading");
+      fetchData();
+    }
+  }, [params.galleryCode, authLoading]);
 
   async function handleSubmit(
     e: MouseEvent | React.MouseEvent<HTMLButtonElement>
@@ -130,7 +138,7 @@ export default function GalleryPage({
 
   return (
     <>
-      {authUser && <Navbar />}
+      {authUser && !authUser.is_anonymous && <Navbar />}
       <div className=" p-4">
         {authLoading || isLoading ? (
           <LoadingIcon center />
