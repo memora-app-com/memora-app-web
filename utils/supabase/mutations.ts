@@ -87,6 +87,7 @@ const createPhotos = async (
     galleryId: number;
     userId: string;
     url: string;
+    type: "image" | "video";
   }[]
 ) => {
   const { data, error } = await supabase
@@ -96,6 +97,7 @@ const createPhotos = async (
         gallery_id: photo.galleryId,
         user_id: photo.userId,
         url: photo.url,
+        type: photo.type,
       })),
       { onConflict: "url" }
     )

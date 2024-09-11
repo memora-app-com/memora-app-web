@@ -8,7 +8,7 @@ import {
   CarouselPrevious,
 } from "@/components/ui/carousel";
 import { Button } from "@/components/ui/button";
-import { MoreHorizontal, Trash2 } from "lucide-react";
+import { MoreHorizontal } from "lucide-react";
 import {
   Dialog,
   DialogContent,
@@ -16,18 +16,15 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-  DialogTrigger,
 } from "@/components/ui/dialog";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { deletePhotos } from "@/utils/supabase/mutations";
-import ReactPlayer from "react-player";
+import ReactPlayer from "react-player/lazy";
 
 const Gallery = (props: {
   photos;
@@ -36,6 +33,9 @@ const Gallery = (props: {
   isHost?: boolean;
 }) => {
   const [photos, setPhotos] = useState(props.photos);
+  useEffect(() => {
+    setPhotos(props.photos);
+  }, [props.photos]);
   const title = props.title;
   const isPersonalMode = props.isPersonalMode || false;
   const isHost = props.isHost || false;
@@ -48,13 +48,13 @@ const Gallery = (props: {
 
   // Prevent right click
   useEffect(() => {
-    const handleContextmenu = (e) => {
-      e.preventDefault();
-    };
-    document.addEventListener("contextmenu", handleContextmenu);
-    return function cleanup() {
-      document.removeEventListener("contextmenu", handleContextmenu);
-    };
+    // const handleContextmenu = (e) => {
+    //   e.preventDefault();
+    // };
+    // document.addEventListener("contextmenu", handleContextmenu);
+    // return function cleanup() {
+    //   document.removeEventListener("contextmenu", handleContextmenu);
+    // };
   }, []);
 
   // Close the preview when clicking outside
@@ -111,10 +111,10 @@ const Gallery = (props: {
   }, [showPreview, showPreviewIndex, photos]);
 
   function handleImageClick(
-    event: React.MouseEvent<HTMLImageElement, MouseEvent>,
+    event: React.MouseEvent<HTMLImageElement, MouseEvent> | null,
     index: number
   ): void {
-    event.preventDefault();
+    if (event) event.preventDefault();
 
     setShowPreviewIndex(index);
     console.log(event);
@@ -153,80 +153,74 @@ const Gallery = (props: {
         </DialogContent>
       </Dialog>
       <div className="masonry sm:masonry-sm md:masonry-md lg:masonry-lg 2xl:masonry-2xl 3xl:masonry-3xl">
-        {photos.map((photo) => (
+        {photos.map((media) => (
           <div
-            key={photo.id}
+            key={media.id}
             className="mb-2 break-inside hover:scale-105 transition-all duration-300 relative z-0"
           >
-            {photo.type === "image" && (
-              <>
+            <>
+              {media.type === "image" && (
                 <Image
-                  src={photo.url}
+                  src={media.url}
                   width={500}
                   height={500}
                   alt="Event photo (error)"
                   className="w-full h-full object-cover"
                   loading="lazy"
-                  onClick={(e) => handleImageClick(e, photos.indexOf(photo))}
+                  onClick={(e) => handleImageClick(e, photos.indexOf(media))}
                 />
-                {(isPersonalMode || isHost) && (
-                  <>
-                    <div className="absolute right-0 bottom-0">
-                      <DropdownMenu>
-                        <DropdownMenuTrigger>
-                          <Button
-                            className=" flex z-10 bg-radial-gradient-to-transparent text-white hover:bg-transparent hover:text-accent hover:scale-75 transition-all duration-300"
-                            onClick={handleDeleteDialogChange}
-                            variant="ghost-destructive"
-                          >
-                            <MoreHorizontal />
-                          </Button>
-                        </DropdownMenuTrigger>
+              )}
+              {media.type === "video" && (
+                <div
+                  onClick={() => handleImageClick(null, photos.indexOf(media))}
+                >
+                  <ReactPlayer
+                    width="100%"
+                    height="100%"
+                    style={{ objectFit: "cover" }}
+                    url={media.url}
+                    controls={false}
+                  />
+                </div>
+              )}
+              {(isPersonalMode || isHost) && (
+                <>
+                  <div className="absolute right-0 bottom-0">
+                    <DropdownMenu>
+                      <DropdownMenuTrigger>
+                        <Button
+                          className=" flex z-10 bg-radial-gradient-to-transparent text-white hover:bg-transparent hover:text-accent hover:scale-75 transition-all duration-300"
+                          onClick={handleDeleteDialogChange}
+                          variant="ghost-destructive"
+                        >
+                          <MoreHorizontal />
+                        </Button>
+                      </DropdownMenuTrigger>
 
-                        <DropdownMenuContent className="">
-                          <DropdownMenuItem
-                            onClick={() => {
-                              handleDeleteDialogChange();
-                              setPhotoToDelete(photo);
-                            }}
-                            className="text-destructive"
-                          >
-                            Delete
-                          </DropdownMenuItem>
-                        </DropdownMenuContent>
-                      </DropdownMenu>
-                    </div>
-                  </>
-                )}
-              </>
-            )}
-            {photo.type === "video" && (
-              <>
-                <ReactPlayer
-                  width="100%"
-                  height="100%"
-                  style={{ objectFit: "cover" }}
-                  url={photo.url}
-                  controls={true}
-                  config={{
-                    file: {
-                      attributes: {
-                        controlsList: "nodownload",
-                      },
-                    },
-                  }}
-                />
-                <source src={photo.url} type="video/mp4" />
-              </>
-            )}
+                      <DropdownMenuContent className="">
+                        <DropdownMenuItem
+                          onClick={() => {
+                            handleDeleteDialogChange();
+                            setPhotoToDelete(media);
+                          }}
+                          className="text-destructive"
+                        >
+                          Delete
+                        </DropdownMenuItem>
+                      </DropdownMenuContent>
+                    </DropdownMenu>
+                  </div>
+                </>
+              )}
+            </>
           </div>
         ))}
       </div>
       {showPreview && (
         <div
           className={`fixed top-0 left-0 w-full h-full flex items-center justify-center 
-        bg-foreground/80 backdrop-blur-sm text-white text-2xl z-50
-        font-bold cursor-pointer transition-all duration-300`}
+            bg-foreground/80 backdrop-blur-sm text-white text-2xl z-50
+            font-bold cursor-pointer transition-all duration-300`}
         >
           <Carousel
             className="w-full max-w-5xl opacity-100"
@@ -236,12 +230,12 @@ const Gallery = (props: {
             }}
           >
             <CarouselContent>
-              {photos.map((image, index) => (
+              {photos.map((media, index) => (
                 <CarouselItem key={index}>
-                  {image.type === "image" && (
+                  {media.type === "image" && (
                     <>
                       <Image
-                        src={image.url}
+                        src={media.url}
                         alt="Error while loading image"
                         width={2000}
                         height={2000}
@@ -250,23 +244,25 @@ const Gallery = (props: {
                       />
                     </>
                   )}
-                  {image.type === "video" && (
+                  {media.type === "video" && (
                     <div className="w-full h-full flex items-center justify-center">
                       <ReactPlayer
                         width="100%"
                         height="50%"
                         style={{ objectFit: "cover", maxHeight: "60vh" }}
-                        url={image.url}
+                        url={media.url}
                         controls={true}
                         config={{
                           file: {
                             attributes: {
-                              controlsList: "nodownload",
+                              disablepictureinpicture: true,
+                              controlsList:
+                                "nofullscreen nodownload noremoteplayback noplaybackrate disablepictureinpicture",
                             },
                           },
                         }}
                       />
-                      <source src={image.url} type="video/mp4" />
+                      <source src={media.url} type="video/mp4" />
                     </div>
                   )}
                 </CarouselItem>

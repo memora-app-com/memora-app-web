@@ -97,6 +97,7 @@ export default function GalleryPage({
       galleryId: gallery.id,
       userId: authUser.id,
       url: file.url,
+      type: file.type,
     }));
 
     await createPhotos(photosToCreate);
@@ -108,8 +109,6 @@ export default function GalleryPage({
     );
     setUserPhotos([...userPhotos, ...newPhotos]);
     setIsSaveLoading(false);
-    //this doesn't work
-    // router.refresh();
   }
 
   function handleUploadDialogChange(open: boolean): void {
@@ -245,14 +244,14 @@ export default function GalleryPage({
             >
               <div className="text-center">
                 <DialogTrigger asChild>
-                  <Button className="mt-2">Upload photos</Button>
+                  <Button className="mt-2">Upload files</Button>
                 </DialogTrigger>
               </div>
               <DialogContent className="sm:max-w-[425px]">
                 <DialogHeader>
-                  <DialogTitle>Upload your photos</DialogTitle>
+                  <DialogTitle>Upload your memories</DialogTitle>
                   <DialogDescription>
-                    Upload photos here. Wait for them to load, then click save
+                    Upload files here. Wait for them to load, then click save
                     when you&rsquo;re done.
                   </DialogDescription>
                 </DialogHeader>

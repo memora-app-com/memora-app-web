@@ -67,7 +67,6 @@ const Galleries = () => {
                   </div>
                   <div className="p-4 bg-muted flex">
                     <Link href={`/gallery/${gallery.code}`}>
-                      {" "}
                       <Button>View gallery</Button>
                     </Link>
                     <Button disabled variant="ghost-destructive" className="">

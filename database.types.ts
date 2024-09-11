@@ -7,6 +7,31 @@ export type Json =
   | Json[]
 
 export type Database = {
+  graphql_public: {
+    Tables: {
+      [_ in never]: never
+    }
+    Views: {
+      [_ in never]: never
+    }
+    Functions: {
+      graphql: {
+        Args: {
+          operationName?: string
+          query?: string
+          variables?: Json
+          extensions?: Json
+        }
+        Returns: Json
+      }
+    }
+    Enums: {
+      [_ in never]: never
+    }
+    CompositeTypes: {
+      [_ in never]: never
+    }
+  }
   public: {
     Tables: {
       galleries: {
@@ -58,6 +83,7 @@ export type Database = {
           created_at: string
           gallery_id: number
           id: number
+          type: Database["public"]["Enums"]["media_type"]
           url: string
           user_id: string | null
         }
@@ -65,6 +91,7 @@ export type Database = {
           created_at?: string
           gallery_id: number
           id?: number
+          type?: Database["public"]["Enums"]["media_type"]
           url: string
           user_id?: string | null
         }
@@ -72,6 +99,7 @@ export type Database = {
           created_at?: string
           gallery_id?: number
           id?: number
+          type?: Database["public"]["Enums"]["media_type"]
           url?: string
           user_id?: string | null
         }
@@ -81,13 +109,6 @@ export type Database = {
             columns: ["gallery_id"]
             isOneToOne: false
             referencedRelation: "galleries"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "photos_user_id_fkey"
-            columns: ["user_id"]
-            isOneToOne: false
-            referencedRelation: "users"
             referencedColumns: ["id"]
           },
         ]
@@ -169,6 +190,7 @@ export type Database = {
     }
     Enums: {
       billing_type: "free_trial" | "one_time" | "monthly"
+      media_type: "image" | "video"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -257,3 +279,4 @@ export type Enums<
   : PublicEnumNameOrOptions extends keyof PublicSchema["Enums"]
     ? PublicSchema["Enums"][PublicEnumNameOrOptions]
     : never
+
