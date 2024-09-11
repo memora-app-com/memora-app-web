@@ -120,9 +120,26 @@ const deletePhotoObjects = async (props: { urls: string[] }) => {
   return data[0];
 };
 
+const deletePhotos = async (props: { photos: any[] }) => {
+  const photoIds = props.photos.map((photo) => photo.id);
+  const firstPhotoId = photoIds[0];
+  const { error } = await supabase
+    .from("photos")
+    .delete()
+    .eq("id", firstPhotoId);
+
+  if (error) {
+    throw new Error(`Supabase photo deletion failed: ${error.message}`);
+  }
+
+  const photoUrls = props.photos.map((photo) => photo.url);
+  await deletePhotoObjects({ urls: photoUrls });
+};
+
 export {
   updateUserPlan,
   createGalleryForUser,
   createPhotos,
   deletePhotoObjects,
+  deletePhotos,
 };

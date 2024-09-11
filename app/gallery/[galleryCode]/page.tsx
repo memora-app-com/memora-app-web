@@ -36,11 +36,13 @@ export default function GalleryPage({
   const [isLoading, setIsLoading] = useState(true);
   const [isSaveLoading, setIsSaveLoading] = useState(false);
   const [photos, setPhotos] = useState([]);
+  const [userPhotos, setUserPhotos] = useState([]);
   const { authUser, authLoading, authError } = useAuthUser();
   const [uploadedFiles, setUploadedFiles] = useState<UploadedFile[]>([]);
   const [isUploadDialogOpen, setIsUploadDialogOpen] = useState(false);
   const [isInviteDialogOpen, setIsInviteDialogOpen] = useState(false);
   const [isLinkCopied, setIsLinkCopied] = useState(false);
+  const [isHost, setIsHost] = useState(false);
   const router = useRouter();
   const { Canvas } = useQRCode();
 
@@ -62,10 +64,21 @@ export default function GalleryPage({
         setGallery(fetchedGallery);
 
         const fetchedPhotos = await fetchPhotos(fetchedGallery.id);
-        setPhotos(fetchedPhotos);
-      }
 
-      setIsLoading(false);
+        setPhotos(
+          fetchedPhotos.filter((photo) => photo.user_id !== authUser.id)
+        );
+
+        setUserPhotos(
+          fetchedPhotos.filter((photo) => photo.user_id === authUser.id)
+        );
+
+        if (authUser.id === fetchedGallery.host_id) {
+          setIsHost(true);
+        }
+
+        setIsLoading(false);
+      }
     }
 
     if (!authLoading) {
@@ -87,10 +100,14 @@ export default function GalleryPage({
     }));
 
     await createPhotos(photosToCreate);
-    setIsUploadDialogOpen(false);
-    setIsSaveLoading(false);
 
-    setPhotos([...photos, ...photosToCreate]);
+    setIsUploadDialogOpen(false);
+    setUploadedFiles([]);
+    const newPhotos = photosToCreate.filter(
+      (photo) => !userPhotos.find((p) => p.url === photo.url)
+    );
+    setUserPhotos([...userPhotos, ...newPhotos]);
+    setIsSaveLoading(false);
     //this doesn't work
     // router.refresh();
   }
@@ -200,17 +217,22 @@ export default function GalleryPage({
                     className="mt-4"
                     onClick={handleCopyInviteLink}
                   >
-                    <p className="text-sm ">Copy Link</p>
                     {isLinkCopied ? (
-                      <ClipboardCheck
-                        size={20}
-                        className="text-muted-foreground ml-2"
-                      />
+                      <>
+                        <p className="text-sm ">Copy Link</p>
+                        <ClipboardCheck
+                          size={20}
+                          className="text-muted-foreground ml-2"
+                        />
+                      </>
                     ) : (
-                      <Clipboard
-                        size={20}
-                        className="text-muted-foreground ml-2"
-                      />
+                      <>
+                        <p className="text-sm ">Link Copied</p>
+                        <Clipboard
+                          size={20}
+                          className="text-muted-foreground ml-2"
+                        />
+                      </>
                     )}
                   </Button>
                 </div>
@@ -253,7 +275,24 @@ export default function GalleryPage({
               </DialogContent>
             </Dialog>
 
-            <Gallery photos={photos} />
+            {userPhotos.length > 0 && (
+              <>
+                <Gallery
+                  photos={userPhotos}
+                  title="Uploaded by you"
+                  isPersonalMode={true}
+                />
+                <Gallery
+                  photos={photos}
+                  title="Uploaded by others"
+                  isHost={isHost}
+                />
+              </>
+            )}
+
+            {userPhotos.length === 0 && (
+              <Gallery photos={photos} title="All photos" />
+            )}
           </div>
         )}
       </div>

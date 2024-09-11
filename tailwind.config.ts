@@ -21,6 +21,10 @@ const config = {
       },
     },
     extend: {
+      backgroundImage: (theme) => ({
+        "radial-gradient-to-transparent":
+          "radial-gradient(#00000090 , #00000000 70%)",
+      }),
       fontFamily: {},
       screens: {
         "3xl": "1600px",
