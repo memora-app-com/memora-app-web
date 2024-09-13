@@ -8,7 +8,7 @@ import {
   CarouselPrevious,
 } from "@/components/ui/carousel";
 import { Button } from "@/components/ui/button";
-import { MoreHorizontal } from "lucide-react";
+import { MoreHorizontal, XCircleIcon, XIcon } from "lucide-react";
 import {
   Dialog,
   DialogContent,
@@ -49,13 +49,13 @@ const Gallery = (props: {
 
   // Prevent right click
   useEffect(() => {
-    const handleContextmenu = (e) => {
-      e.preventDefault();
-    };
-    document.addEventListener("contextmenu", handleContextmenu);
-    return function cleanup() {
-      document.removeEventListener("contextmenu", handleContextmenu);
-    };
+    // const handleContextmenu = (e) => {
+    //   e.preventDefault();
+    // };
+    // document.addEventListener("contextmenu", handleContextmenu);
+    // return function cleanup() {
+    //   document.removeEventListener("contextmenu", handleContextmenu);
+    // };
   }, []);
 
   // Close the preview when clicking outside
@@ -224,6 +224,7 @@ const Gallery = (props: {
             font-bold cursor-pointer transition-all duration-300`}
         >
           <Carousel
+            ref={showPreviewRef}
             className="w-full max-w-5xl opacity-100"
             opts={{
               startIndex: showPreviewIndex,
@@ -242,19 +243,17 @@ const Gallery = (props: {
                         alt="Error while loading image"
                         width={2000}
                         height={2000}
-                        ref={showPreviewRef}
                         loading="eager"
-                        className="w-full h-full object-contain max-h-[60vh]" // Ensures the full image is visible
+                        className="w-full h-full object-contain max-h-[80vh]" // Ensures the full image is visible
                       />
                     </>
                   )}
                   {media.type === "video" && (
-                    <div className="bg-foreground/50 flex items-center justify-center">
+                    <div className="bg-foreground/50 w-full h-full object-contain max-h-[80vh] flex items-center justify-center">
                       <ReactPlayer
                         width="99%"
                         height="100%"
-                        ref={showPreviewRef}
-                        style={{ objectFit: "cover", maxHeight: "" }}
+                        style={{ objectFit: "contain", maxHeight: "100vh" }}
                         url={media.url}
                         controls={true}
                         config={{
@@ -274,14 +273,20 @@ const Gallery = (props: {
               ))}
             </CarouselContent>
 
+            <XIcon
+              className="bg-radial-gradient-to-transparent hover:text-background hover:bg-foreground  hover:scale-110 transition-transform
+                rounded-full absolute top-2 left-2 text-4xl h-10 w-10"
+              onClick={() => setShowPreview(false)}
+            />
+
             <CarouselPrevious
-              ref={showPreviewRef}
-              className="absolute left-[2%] lg:left-[5%] top-1/2 transform -translate-y-1/2 text-4xl"
+              className="bg-radial-gradient-to-transparent hover:text-background hover:bg-foreground
+              absolute left-[2%] lg:left-[5%] top-1/2 transform -translate-y-1/2 text-4xl"
             />
 
             <CarouselNext
-              ref={showPreviewRef}
-              className="absolute right-[2%] lg:right-[5%] top-1/2 transform -translate-y-1/2 text-4xl"
+              className="bg-radial-gradient-to-transparent  hover:text-background hover:bg-foreground
+              absolute right-[2%] lg:right-[5%] top-1/2 transform -translate-y-1/2 text-4xl"
             />
           </Carousel>
         </div>
