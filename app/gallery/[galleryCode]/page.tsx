@@ -251,7 +251,7 @@ export default function GalleryPage({
                 <DialogHeader>
                   <DialogTitle>Upload your memories</DialogTitle>
                   <DialogDescription>
-                    Upload files here. Wait for them to load, then click save
+                    Upload files here.* Wait for them to load, then click save
                     when you&rsquo;re done.
                   </DialogDescription>
                 </DialogHeader>
@@ -262,7 +262,7 @@ export default function GalleryPage({
                   setUploadedFiles={setUploadedFiles}
                 />
 
-                <DialogFooter>
+                <DialogFooter className="">
                   <Button
                     onClick={handleSubmit}
                     type="submit"
@@ -271,6 +271,10 @@ export default function GalleryPage({
                     {isSaveLoading ? <LoadingIcon /> : "Save"}
                   </Button>
                 </DialogFooter>
+                <p className="text-xs font-thin text-center">
+                  * Uploaded files will be <strong>publicly</strong> visible
+                  <br /> to anyone who joins this gallery
+                </p>
               </DialogContent>
             </Dialog>
 
