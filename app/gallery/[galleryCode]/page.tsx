@@ -216,7 +216,7 @@ export default function GalleryPage({
                     className="mt-4"
                     onClick={handleCopyInviteLink}
                   >
-                    {isLinkCopied ? (
+                    {!isLinkCopied ? (
                       <>
                         <p className="text-sm ">Copy Link</p>
                         <ClipboardCheck

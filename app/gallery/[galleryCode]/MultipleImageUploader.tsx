@@ -36,10 +36,19 @@ const FileSvgDraw = () => {
         />
       </svg>
       <p className="mb-1 text-sm text-gray-500 dark:text-gray-400 text-center">
-        <strong>Click to upload</strong>
-        &nbsp;or drag and drop
-        <br />
-        images or videos up to <strong>200MB</strong>
+        <strong>Click here to upload</strong>
+        {/* &nbsp;or drag and drop */}
+        <ul className="text-left">
+          <li>- images or videos</li>
+          <li>
+            - up to <strong>200MB</strong> per file
+          </li>
+          <li>
+            - up to <strong>10</strong> files total
+          </li>
+        </ul>
+
+        {/* up to <strong>200MB</strong> */}
       </p>
     </>
   );
@@ -62,7 +71,7 @@ const MultipleImageUploader = (props: {
       "image/*": [".jpg", ".jpeg", ".png", ".gif"],
       "video/*": [".mp4", ".mov", ".avi", ".mkv"],
     },
-    // maxFiles: 10,
+    maxFiles: 10,
     maxSize: 1024 * 1024 * 200, // 200MB
     multiple: true,
   };
