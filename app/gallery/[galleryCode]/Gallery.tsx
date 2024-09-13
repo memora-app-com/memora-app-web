@@ -24,7 +24,8 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { deletePhotos } from "@/utils/supabase/mutations";
-import ReactPlayer from "react-player/lazy";
+import ReactPlayerLazy from "react-player/lazy";
+import ReactPlayer from "react-player";
 
 const Gallery = (props: {
   photos;
@@ -48,13 +49,13 @@ const Gallery = (props: {
 
   // Prevent right click
   useEffect(() => {
-    // const handleContextmenu = (e) => {
-    //   e.preventDefault();
-    // };
-    // document.addEventListener("contextmenu", handleContextmenu);
-    // return function cleanup() {
-    //   document.removeEventListener("contextmenu", handleContextmenu);
-    // };
+    const handleContextmenu = (e) => {
+      e.preventDefault();
+    };
+    document.addEventListener("contextmenu", handleContextmenu);
+    return function cleanup() {
+      document.removeEventListener("contextmenu", handleContextmenu);
+    };
   }, []);
 
   // Close the preview when clicking outside
@@ -174,7 +175,7 @@ const Gallery = (props: {
                 <div
                   onClick={() => handleImageClick(null, photos.indexOf(media))}
                 >
-                  <ReactPlayer
+                  <ReactPlayerLazy
                     width="100%"
                     height="100%"
                     style={{ objectFit: "cover" }}
@@ -224,14 +225,16 @@ const Gallery = (props: {
         >
           <Carousel
             className="w-full max-w-5xl opacity-100"
-            ref={showPreviewRef}
             opts={{
               startIndex: showPreviewIndex,
             }}
           >
             <CarouselContent>
               {photos.map((media, index) => (
-                <CarouselItem key={index}>
+                <CarouselItem
+                  className="flex items-center justify-center"
+                  key={index}
+                >
                   {media.type === "image" && (
                     <>
                       <Image
@@ -239,17 +242,19 @@ const Gallery = (props: {
                         alt="Error while loading image"
                         width={2000}
                         height={2000}
-                        loading="lazy"
+                        ref={showPreviewRef}
+                        loading="eager"
                         className="w-full h-full object-contain max-h-[60vh]" // Ensures the full image is visible
                       />
                     </>
                   )}
                   {media.type === "video" && (
-                    <div className="w-full h-full flex items-center justify-center">
+                    <div className="bg-foreground/50 flex items-center justify-center">
                       <ReactPlayer
-                        width="100%"
-                        height="50%"
-                        style={{ objectFit: "cover", maxHeight: "60vh" }}
+                        width="99%"
+                        height="100%"
+                        ref={showPreviewRef}
+                        style={{ objectFit: "cover", maxHeight: "" }}
                         url={media.url}
                         controls={true}
                         config={{
@@ -269,9 +274,15 @@ const Gallery = (props: {
               ))}
             </CarouselContent>
 
-            <CarouselPrevious className="absolute left-[2%] lg:left-[5%] top-1/2 transform -translate-y-1/2 text-4xl" />
+            <CarouselPrevious
+              ref={showPreviewRef}
+              className="absolute left-[2%] lg:left-[5%] top-1/2 transform -translate-y-1/2 text-4xl"
+            />
 
-            <CarouselNext className="absolute right-[2%] lg:right-[5%] top-1/2 transform -translate-y-1/2 text-4xl" />
+            <CarouselNext
+              ref={showPreviewRef}
+              className="absolute right-[2%] lg:right-[5%] top-1/2 transform -translate-y-1/2 text-4xl"
+            />
           </Carousel>
         </div>
       )}
