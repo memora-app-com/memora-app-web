@@ -22,6 +22,7 @@ const buttonVariants = cva(
         //Custom
         "ghost-destructive":
           "text-destructive hover:bg-destructive/90 hover:text-destructive-foreground",
+        black: "bg-black text-white border-2 border-black hover:bg-black/90",
       },
       size: {
         default: "h-10 px-4 py-2",

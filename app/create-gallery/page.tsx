@@ -158,7 +158,7 @@ export default function CreateGallery() {
                             </p>
                           </FormLabel>
                           <div className="relative table w-full">
-                            <span className="px-3 py-1.5 text-sm font-normal leading-none bg-primary text-secondary-foreground text-center  border w-1 whitespace-nowrap align-middle table-cell rounded-l-md border-r-0">
+                            <span className="relative left-1 px-3 py-1.5 text-sm font-normal leading-none bg-primary text-secondary-foreground text-center  border w-1 whitespace-nowrap align-middle table-cell rounded-l-md border-r-0">
                               #
                             </span>
                             <FormControl>
