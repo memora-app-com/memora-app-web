@@ -186,7 +186,7 @@ export default function Home() {
             <div className="flex flex-col-reverse md:flex-row w-full">
               <div className="w-full md:w-1/2 py-20 space-y-4 flex flex-col justify-center items-center md:text-left md:items-start container">
                 <Typography variant="h2">
-                  It's about the way we collect and share our memories
+                  It&apos;s about the way we collect and share our memories
                 </Typography>
                 <Accordion type="single" collapsible className="w-full">
                   <Card className="bg-primary mb-4 px-4">
